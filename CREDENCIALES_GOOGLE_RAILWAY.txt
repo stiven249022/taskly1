@@ -1,0 +1,40 @@
+# 🔑 Credenciales de Google OAuth para Railway
+
+## Variables a agregar en Railway:
+
+GOOGLE_CLIENT_ID=12955442265-8ndni8ego3f2212q4mgkls39uhabekas.apps.googleusercontent.com
+
+GOOGLE_CLIENT_SECRET=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
+
+GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callback
+
+---
+
+## ⚠️ IMPORTANTE:
+
+1. La URL de redirección en Railway debe ser la de PRODUCCIÓN (no localhost)
+2. También debes agregar esta URL en Google Cloud Console:
+   - Ve a Google Cloud Console → APIs & Services → Credentials
+   - Edita tus credenciales OAuth 2.0
+   - En "Authorized redirect URIs", agrega:
+     https://web-production-3192.up.railway.app/auth/google/callback
+   - Guarda los cambios
+
+---
+
+## 📝 Pasos para agregar en Railway:
+
+1. Ve a Railway Dashboard → tu proyecto → servicio web → Variables
+2. Haz clic en "+ New Variable"
+3. Agrega las 3 variables una por una:
+   - Nombre: GOOGLE_CLIENT_ID
+     Valor: 12955442265-8ndni8ego3f2212q4mgkls39uhabekas.apps.googleusercontent.com
+   
+   - Nombre: GOOGLE_CLIENT_SECRET
+     Valor: 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
+   
+   - Nombre: GOOGLE_REDIRECT_URI
+     Valor: https://web-production-3192.up.railway.app/auth/google/callback
+
+4. Railway redesplegará automáticamente después de agregar las variables
+
