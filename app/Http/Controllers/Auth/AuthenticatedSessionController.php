@@ -45,12 +45,20 @@ class AuthenticatedSessionController extends Controller
 
             // Regenerar el token CSRF
             $request->session()->regenerateToken();
+            
+            // Forzar eliminación de cookies de sesión
+            $cookie = \Illuminate\Support\Facades\Cookie::forget(config('session.cookie'));
+            \Illuminate\Support\Facades\Cookie::queue($cookie);
         } catch (\Exception $e) {
             // Si hay un error, intentar limpiar la sesión de otra manera
             try {
                 \Illuminate\Support\Facades\Session::flush();
                 \Illuminate\Support\Facades\Session::regenerate();
                 Auth::guard('web')->logout();
+                
+                // Intentar eliminar cookie manualmente
+                $cookie = \Illuminate\Support\Facades\Cookie::forget(config('session.cookie'));
+                \Illuminate\Support\Facades\Cookie::queue($cookie);
             } catch (\Exception $e2) {
                 // Si aún falla, simplemente redirigir
                 \Log::error('Error al cerrar sesión: ' . $e2->getMessage());
