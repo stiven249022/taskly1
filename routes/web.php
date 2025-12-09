@@ -297,7 +297,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
-    })->name('verification.notice');
+    })->name('verification.notice.page');
     
     Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
         $user = \App\Models\User::find($id);
