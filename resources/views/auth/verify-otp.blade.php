@@ -150,7 +150,7 @@
             @endif
             
             <!-- Formulario OTP -->
-            <form method="POST" action="{{ route('otp.verify') }}" id="otpForm">
+            <form method="POST" action="{{ route('otp.verify.submit') }}" id="otpForm">
                 @csrf
                 
                 <!-- Contenedor de dígitos OTP -->
