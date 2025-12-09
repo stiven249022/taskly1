@@ -101,7 +101,15 @@ Puedes probar cerrar sesión manualmente accediendo directamente a:
 https://web-production-3192.up.railway.app/logout
 ```
 
-(Nota: Esto requiere un método POST, así que no funcionará directamente en el navegador, pero puedes verificar si la ruta existe)
+**Nota**: Ahora hay una ruta GET alternativa para logout que puedes probar directamente en el navegador. Esto es útil para debuggear, aunque no es la mejor práctica de seguridad.
+
+### Verificar que el Formulario Funciona
+
+1. Abre las herramientas de desarrollador (F12)
+2. Ve a la pestaña **Network** (Red)
+3. Haz clic en "Cerrar sesión"
+4. Verifica que se haga una petición POST a `/logout`
+5. Revisa la respuesta - debería ser un redirect (código 302)
 
 ## 📝 Notas Adicionales
 

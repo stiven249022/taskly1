@@ -37,17 +37,26 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         try {
+            // Cerrar sesión del usuario
             Auth::guard('web')->logout();
 
+            // Invalidar la sesión
             $request->session()->invalidate();
 
+            // Regenerar el token CSRF
             $request->session()->regenerateToken();
         } catch (\Exception $e) {
             // Si hay un error, intentar limpiar la sesión de otra manera
-            \Illuminate\Support\Facades\Session::flush();
-            \Illuminate\Support\Facades\Session::regenerate();
+            try {
+                \Illuminate\Support\Facades\Session::flush();
+                \Illuminate\Support\Facades\Session::regenerate();
+                Auth::guard('web')->logout();
+            } catch (\Exception $e2) {
+                // Si aún falla, simplemente redirigir
+                \Log::error('Error al cerrar sesión: ' . $e2->getMessage());
+            }
         }
 
-        return redirect('/');
+        return redirect('/')->with('status', 'Sesión cerrada exitosamente');
     }
 }
