@@ -317,7 +317,7 @@ Route::middleware('auth')->group(function () {
         $user->markEmailAsVerified();
         
         return redirect('/dashboard')->with('success', '¡Tu email ha sido verificado exitosamente!');
-    })->name('verification.verify');
+    })->name('verification.verify.manual');
     
     Route::post('/email/verification-notification', function () {
         $user = auth()->user();
@@ -329,7 +329,7 @@ Route::middleware('auth')->group(function () {
         $user->sendEmailVerificationNotification();
         
         return redirect()->back()->with('success', 'Email de verificación enviado.');
-    })->name('verification.send');
+    })->name('verification.send.manual');
 });
 
 require __DIR__.'/auth.php';
