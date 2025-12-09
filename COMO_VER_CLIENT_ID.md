@@ -48,9 +48,9 @@ Tipo: Aplicación web
 ID de cliente: 123456789-abcdefghijklmnop.apps.googleusercontent.com
 Secreto de cliente: GOCSPX-****... (oculto)
 Orígenes JavaScript autorizados:
-  - https://web-production-3192.up.railway.app
+  - https://tasklysena.up.railway.app
 URI de redirección autorizados:
-  - https://web-production-3192.up.railway.app/auth/google/callback
+  - https://tasklysena.up.railway.app/auth/google/callback
 ```
 
 ---
@@ -93,7 +93,7 @@ Una vez que tengas el Client ID y Client Secret:
 2. **Agrégalos en Railway** como variables de entorno:
    - `GOOGLE_CLIENT_ID` = [tu client id]
    - `GOOGLE_CLIENT_SECRET` = [tu client secret]
-   - `GOOGLE_REDIRECT_URI` = `https://web-production-3192.up.railway.app/auth/google/callback`
+   - `GOOGLE_REDIRECT_URI` = `https://tasklysena.up.railway.app/auth/google/callback`
 
 ---
 

@@ -36,7 +36,7 @@ SESSION_SAME_SITE=lax
 Asegúrate de que estas variables estén configuradas:
 
 ```env
-APP_URL=https://web-production-3192.up.railway.app
+APP_URL=https://tasklysena.up.railway.app
 SESSION_DRIVER=cookie
 ```
 
@@ -98,7 +98,7 @@ Railway ejecutará las migraciones automáticamente.
 
 Puedes probar cerrar sesión manualmente accediendo directamente a:
 ```
-https://web-production-3192.up.railway.app/logout
+https://tasklysena.up.railway.app/logout
 ```
 
 **Nota**: Ahora hay una ruta GET alternativa para logout que puedes probar directamente en el navegador. Esto es útil para debuggear, aunque no es la mejor práctica de seguridad.

@@ -6,7 +6,7 @@ GOOGLE_CLIENT_ID=12955442265-8ndni8ego3f2212q4mgkls39uhabekas.apps.googleusercon
 
 GOOGLE_CLIENT_SECRET=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
 
-GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callback
+GOOGLE_REDIRECT_URI=https://tasklysena.up.railway.app/auth/google/callback
 
 ---
 
@@ -17,7 +17,7 @@ GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callb
    - Ve a Google Cloud Console → APIs & Services → Credentials
    - Edita tus credenciales OAuth 2.0
    - En "Authorized redirect URIs", agrega:
-     https://web-production-3192.up.railway.app/auth/google/callback
+     https://tasklysena.up.railway.app/auth/google/callback
    - Guarda los cambios
 
 ---
@@ -34,7 +34,7 @@ GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callb
      Valor: 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
    
    - Nombre: GOOGLE_REDIRECT_URI
-     Valor: https://web-production-3192.up.railway.app/auth/google/callback
+     Valor: https://tasklysena.up.railway.app/auth/google/callback
 
 4. Railway redesplegará automáticamente después de agregar las variables
 

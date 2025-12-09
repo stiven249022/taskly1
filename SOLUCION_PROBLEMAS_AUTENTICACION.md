@@ -31,7 +31,7 @@ APP_DEBUG=true
 APP_ENV=production
 APP_KEY=base64:IGC2UtkMZAZ/cDbLcQtE74boTbdQs/3U48UiW2BtqpM=
 APP_NAME=Taskly
-APP_URL=https://web-production-3192.up.railway.app
+APP_URL=https://tasklysena.up.railway.app
 
 # Base de datos (verificar que sean correctas)
 DB_CONNECTION=mysql
@@ -44,7 +44,7 @@ DB_PASSWORD=ARckPSlsJoonIDFxrSUqofaZazxcTInW
 # Variables de Google OAuth (FALTANTES - AGREGAR ESTAS)
 GOOGLE_CLIENT_ID=tu-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=tu-google-client-secret
-GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callback
+GOOGLE_REDIRECT_URI=https://tasklysena.up.railway.app/auth/google/callback
 
 # Sesiones y cache
 LOG_CHANNEL=stderr
@@ -64,7 +64,7 @@ QUEUE_CONNECTION=sync
    - Haz clic en ellas para editarlas
    - En **Authorized redirect URIs**, agrega:
      ```
-     https://web-production-3192.up.railway.app/auth/google/callback
+     https://tasklysena.up.railway.app/auth/google/callback
      ```
    - Guarda los cambios
 5. Si NO tienes credenciales:
@@ -73,11 +73,11 @@ QUEUE_CONNECTION=sync
    - Name: Taskly Production
    - **Authorized JavaScript origins**:
      ```
-     https://web-production-3192.up.railway.app
+     https://tasklysena.up.railway.app
      ```
    - **Authorized redirect URIs**:
      ```
-     https://web-production-3192.up.railway.app/auth/google/callback
+     https://tasklysena.up.railway.app/auth/google/callback
      ```
    - Haz clic en **Create**
    - **Copia el Client ID y Client Secret**
@@ -93,7 +93,7 @@ QUEUE_CONNECTION=sync
 ```
 GOOGLE_CLIENT_ID=tu-client-id-copiado.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=tu-client-secret-copiado
-GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callback
+GOOGLE_REDIRECT_URI=https://tasklysena.up.railway.app/auth/google/callback
 ```
 
 ⚠️ **IMPORTANTE**: Reemplaza `tu-client-id-copiado` y `tu-client-secret-copiado` con los valores reales de Google Cloud Console.
@@ -178,13 +178,13 @@ O puedes agregar un comando de limpieza de cache en el `startCommand` del `railw
 
 ### 2. Probar Inicio de Sesión Normal
 
-1. Ve a `https://web-production-3192.up.railway.app/login`
+1. Ve a `https://tasklysena.up.railway.app/login`
 2. Intenta iniciar sesión con un usuario registrado
 3. Si falla, revisa los logs de Railway
 
 ### 3. Probar Autenticación con Google
 
-1. Ve a `https://web-production-3192.up.railway.app/login`
+1. Ve a `https://tasklysena.up.railway.app/login`
 2. Haz clic en "Continuar con Google"
 3. Si te redirige a Google, las credenciales están correctas
 4. Si ves un error, revisa los logs de Railway
@@ -211,7 +211,7 @@ O puedes agregar un comando de limpieza de cache en el `startCommand` del `railw
 1. Verifica que `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` sean correctos
 2. Verifica que `GOOGLE_REDIRECT_URI` sea exactamente:
    ```
-   https://web-production-3192.up.railway.app/auth/google/callback
+   https://tasklysena.up.railway.app/auth/google/callback
    ```
 3. Verifica en Google Cloud Console que la URL de redirección autorizada sea la misma
 

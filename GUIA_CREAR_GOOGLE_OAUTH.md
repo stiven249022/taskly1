@@ -75,12 +75,12 @@
    
    **Orígenes JavaScript autorizados:**
    - Haz clic en **"+ Agregar URI"** o **"+ Add URI"**
-   - Agrega: `https://web-production-3192.up.railway.app`
+   - Agrega: `https://tasklysena.up.railway.app`
    - (Opcional para desarrollo local): `http://localhost:8000`
    
    **URI de redirección autorizados:**
    - Haz clic en **"+ Agregar URI"** o **"+ Add URI"**
-   - Agrega: `https://web-production-3192.up.railway.app/auth/google/callback`
+   - Agrega: `https://tasklysena.up.railway.app/auth/google/callback`
    - (Opcional para desarrollo local): `http://localhost:8000/auth/google/callback`
    - (Opcional para desarrollo local): `http://127.0.0.1:8000/auth/google/callback`
 
@@ -121,7 +121,7 @@ GOOGLE_CLIENT_SECRET=tu-client-secret-aqui
 
    **Variable 3:**
    - Nombre: `GOOGLE_REDIRECT_URI`
-   - Valor: `https://web-production-3192.up.railway.app/auth/google/callback`
+   - Valor: `https://tasklysena.up.railway.app/auth/google/callback`
 
 5. Railway redesplegará automáticamente
 
@@ -130,7 +130,7 @@ GOOGLE_CLIENT_SECRET=tu-client-secret-aqui
 ## ✅ Paso 6: Verificar que Funciona
 
 1. Espera a que Railway termine de redesplegar (puedes ver el progreso en los logs)
-2. Ve a `https://web-production-3192.up.railway.app/login`
+2. Ve a `https://tasklysena.up.railway.app/login`
 3. Haz clic en "Continuar con Google"
 4. Deberías ser redirigido a Google para autenticarte
 5. Si funciona, ¡listo! 🎉
@@ -140,7 +140,7 @@ GOOGLE_CLIENT_SECRET=tu-client-secret-aqui
 ## 🐛 Solución de Problemas
 
 ### Error: "redirect_uri_mismatch"
-- Verifica que la URL en Railway sea exactamente: `https://web-production-3192.up.railway.app/auth/google/callback`
+- Verifica que la URL en Railway sea exactamente: `https://tasklysena.up.railway.app/auth/google/callback`
 - Verifica que la misma URL esté en Google Cloud Console → Credenciales → URI de redirección autorizados
 
 ### Error: "access_denied"
