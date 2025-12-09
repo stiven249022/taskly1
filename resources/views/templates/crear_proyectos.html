@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly - Crear Proyecto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: absolute;
+                z-index: 10;
+                height: 100vh;
+            }
+            
+            .sidebar-open {
+                transform: translateX(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Estilos para el editor de descripción */
+        .editor-toolbar {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem 0.375rem 0 0;
+            background-color: #f9fafb;
+            padding: 0.5rem;
+        }
+        
+        .editor-content {
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+            min-height: 150px;
+            padding: 1rem;
+        }
+        
+        .editor-content:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+        
+        /* Estilos para los checkboxes personalizados */
+        .custom-checkbox input:checked ~ .checkmark {
+            @apply bg-indigo-600 border-indigo-600;
+        }
+        
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+        
+        .custom-checkbox .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 5px;
+            top: 0px;
+            width: 4px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Efectos de hover para los pasos del wizard */
+        .step-item:hover:not(.active):not(.completed) .step {
+            @apply bg-indigo-100 border-indigo-200;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-indigo-600 flex items-center">
+                    <i class="fas fa-graduation-cap mr-2"></i> Taskly
+                </h1>
+                <p class="text-sm text-gray-500">Organiza tu éxito académico</p>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto">
+                <nav class="p-4">
+                    <div class="mb-6">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Menú</h3>
+                        <ul>
+                            <li class="mb-1">
+                                <a href="../inicio.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <i class="fas fa-tachometer-alt mr-3 text-gray-500"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="tareas/lista.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <i class="fas fa-tasks mr-3 text-gray-500"></i> Tareas
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-indigo-50 text-indigo-700">
+                                    <i class="fas fa-project-diagram mr-3 text-indigo-500"></i> Proyectos
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="calendario/calendario.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <i class="fas fa-calendar-alt mr-3 text-gray-500"></i> Calendario
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mis Cursos</h3>
+                        <ul>
+                            <li class="mb-1">
+                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <span class="w-2 h-2 mr-3 rounded-full bg-green-500"></span> Matemáticas
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <span class="w-2 h-2 mr-3 rounded-full bg-blue-500"></span> Física
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <span class="w-2 h-2 mr-3 rounded-full bg-purple-500"></span> Programación
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50">
+                                    <span class="w-2 h-2 mr-3 rounded-full bg-yellow-500"></span> Historia
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Etiquetas</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Examen</span>
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Tarea</span>
+                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Proyecto</span>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Lectura</span>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-8 h-8 rounded-full mr-2">
+                    <div>
+                        <p class="text-sm font-medium">Ana Martínez</p>
+                        <p class="text-xs text-gray-500">Estudiante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div class="flex items-center">
+                        <button id="sidebarToggle" class="mr-4 text-gray-500 md:hidden">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="flex items-center space-x-2">
+                            <a href="proyectos/lista.html" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-project-diagram"></i>
+                            </a>
+                            <span class="text-gray-400">/</span>
+                            <h2 class="text-xl font-semibold text-gray-800">Nuevo Proyecto</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="p-1 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-bell"></i>
+                                <span class="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Wizard Steps -->
+                    <div class="mb-8">
+                        <ol class="flex items-center w-full">
+                            <li class="step-item flex w-full items-center active" id="step1">
+                                <div class="flex items-center">
+                                    <div class="step flex items-center justify-center w-8 h-8 rounded-full border-2 border-indigo-600 bg-indigo-600 text-white">
+                                        <span class="step-number">1</span>
+                                        <i class="fas fa-check step-completed hidden"></i>
+                                    </div>
+                                    <div class="ml-2 step-title hidden sm:block text-sm font-medium text-indigo-600">Información básica</div>
+                                </div>
+                                <div class="w-full h-0.5 mx-2 bg-gray-200"></div>
+                            </li>
+                            
+                            <li class="step-item flex w-full items-center" id="step2">
+                                <div class="flex items-center">
+                                    <div class="step flex items-center justify-center w-8 h-8 rounded-full border-2 border-gray-300 text-gray-500">
+                                        <span class="step-number">2</span>
+                                        <i class="fas fa-check step-completed hidden"></i>
+                                    </div>
+                                    <div class="ml-2 step-title hidden sm:block text-sm font-medium text-gray-500">Detalles</div>
+                                </div>
+                                <div class="w-full h-0.5 mx-2 bg-gray-200"></div>
+                            </li>
+                            
+                            <li class="step-item flex items-center" id="step3">
+                                <div class="flex items-center">
+                                    <div class="step flex items-center justify-center w-8 h-8 rounded-full border-2 border-gray-300 text-gray-500">
+                                        <span class="step-number">3</span>
+                                        <i class="fas fa-check step-completed hidden"></i>
+                                    </div>
+                                    <div class="ml-2 step-title hidden sm:block text-sm font-medium text-gray-500">Revisión</div>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <!-- Form Container -->
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                        <!-- Form Header -->
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                            <h3 class="text-lg font-medium text-gray-900">Información del Proyecto</h3>
+                            <p class="text-sm text-gray-500 mt-1">Completa todos los campos requeridos para crear tu nuevo proyecto</p>
+                        </div>
+                        
+                        <!-- Form Steps -->
+                        <form id="projectForm">
+                            <!-- Step 1: Basic Information -->
+                            <div class="step-content px-6 py-6" id="step-content-1">
+                                <div class="mb-6">
+                                    <label for="projectName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Proyecto <span class="text-red-500">*</span></label>
+                                    <input type="text" id="projectName" name="projectName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej. Sistema de gestión escolar">
+                                    <p class="mt-1 text-sm text-gray-500">Un nombre descriptivo que identifique claramente tu proyecto.</p>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="projectCourse" class="block text-sm font-medium text-gray-700 mb-1">Curso/Materia <span class="text-red-500">*</span></label>
+                                    <select id="projectCourse" name="projectCourse" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="" disabled selected>Selecciona un curso</option>
+                                        <option value="matematicas">Matemáticas</option>
+                                        <option value="fisica">Física</option>
+                                        <option value="programacion">Programación</option>
+                                        <option value="historia">Historia</option>
+                                        <option value="otros">Otro</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Prioridad <span class="text-red-500">*</span></label>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="cursor-pointer">
+                                            <input type="radio" id="priorityLow" name="priority" value="low" class="hidden peer" required>
+                                            <label for="priorityLow" class="block p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50">
+                                                <div class="flex items-center justify-between">
+                                                    <h3 class="font-medium text-gray-900">Baja</h3>
+                                                    <i class="fas fa-check-circle text-green-500 hidden peer-checked:inline"></i>
+                                                </div>
+                                                <p class="text-sm text-gray-500 mt-1">Sin prisa, puedes tomarte tu tiempo</p>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="cursor-pointer">
+                                            <input type="radio" id="priorityMedium" name="priority" value="medium" class="hidden peer">
+                                            <label for="priorityMedium" class="block p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-yellow-500 peer-checked:bg-yellow-50 hover:bg-gray-50">
+                                                <div class="flex items-center justify-between">
+                                                    <h3 class="font-medium text-gray-900">Media</h3>
+                                                    <i class="fas fa-check-circle text-yellow-500 hidden peer-checked:inline"></i>
+                                                </div>
+                                                <p class="text-sm text-gray-500 mt-1">Importante pero no urgente</p>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="cursor-pointer">
+                                            <input type="radio" id="priorityHigh" name="priority" value="high" class="hidden peer">
+                                            <label for="priorityHigh" class="block p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50">
+                                                <div class="flex items-center justify-between">
+                                                    <h3 class="font-medium text-gray-900">Alta</h3>
+                                                    <i class="fas fa-check-circle text-red-500 hidden peer-checked:inline"></i>
+                                                </div>
+                                                <p class="text-sm text-gray-500 mt-1">Urgente y muy importante</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end">
+                                    <button type="button" class="next-step-btn px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Siguiente <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2: Details -->
+                            <div class="step-content px-6 py-6 hidden" id="step-content-2">
+                                <div class="mb-6">
+                                    <label for="projectDescription" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                                    <div class="editor-container">
+                                        <div class="editor-toolbar flex space-x-1">
+                                            <button type="button" class="p-1 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded">
+                                                <i class="fas fa-bold"></i>
+                                            </button>
+                                            <button type="button" class="p-1 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded">
+                                                <i class="fas fa-italic"></i>
+                                            </button>
+                                            <button type="button" class="p-1 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded">
+                                                <i class="fas fa-underline"></i>
+                                            </button>
+                                            <button type="button" class="p-1 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded">
+                                                <i class="fas fa-list-ul"></i>
+                                            </button>
+                                            <button type="button" class="p-1 text-gray-600 hover:text-indigo-600 hover:bg-gray-100 rounded">
+                                                <i class="fas fa-list-ol"></i>
+                                            </button>
+                                        </div>
+                                        <div id="projectDescription" class="editor-content" contenteditable="true" placeholder="Describe los objetivos, requisitos y especificaciones de tu proyecto..."></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="projectTags" class="block text-sm font-medium text-gray-700 mb-1">Etiquetas</label>
+                                    <div class="relative">
+                                        <div class="flex flex-wrap items-center gap-2 min-h-[42px] px-3 py-2 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                Proyecto
+                                                <button type="button" class="ml-1.5 inline-flex text-blue-500 hover:text-blue-700">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </span>
+                                            
+                                            <input type="text" id="projectTags" class="flex-1 min-w-[100px] border-none focus:outline-none focus:ring-0 text-sm" placeholder="Agregar etiqueta...">
+                                        </div>
+                                        <div class="mt-1 hidden" id="tagsSuggestions">
+                                            <div class="bg-white shadow-lg rounded-md py-1">
+                                                <div class="px-3 py-1 hover:bg-indigo-50 cursor-pointer">Examen</div>
+                                                <div class="px-3 py-1 hover:bg-indigo-50 cursor-pointer">Investigación</div>
+                                                <div class="px-3 py-1 hover:bg-indigo-50 cursor-pointer">Presentación</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fechas</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="startDate" class="block text-xs text-gray-500 mb-1">Fecha de inicio</label>
+                                            <div class="relative">
+                                                <input type="date" id="startDate" name="startDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <i class="fas fa-calendar text-gray-400"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="dueDate" class="block text-xs text-gray-500 mb-1">Fecha de entrega</label>
+                                            <div class="relative">
+                                                <input type="date" id="dueDate" name="dueDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <i class="fas fa-calendar text-gray-400"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6" id="reminderToggle">
+                                    <label class="flex items-center">
+                                        <div class="custom-checkbox relative cursor-pointer">
+                                            <input type="checkbox" class="sr-only" id="enableReminder">
+                                            <div class="checkmark w-5 h-5 border-2 border-gray-300 rounded-sm flex items-center justify-center">
+                                            </div>
+                                        </div>
+                                        <span class="ml-2 text-sm font-medium text-gray-700">Recordatorio antes de la entrega</span>
+                                    </label>
+                                    
+                                    <div id="reminderOptions" class="mt-3 ml-7 hidden">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label for="reminderDays" class="block text-xs text-gray-500 mb-1">Días antes</label>
+                                                <select id="reminderDays" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                                    <option value="1">1 día antes</option>
+                                                    <option value="3">3 días antes</option>
+                                                    <option value="7">1 semana antes</option>
+                                                    <option value="14">2 semanas antes</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="reminderTime" class="block text-xs text-gray-500 mb-1">Hora</label>
+                                                <input type="time" id="reminderTime" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <button type="button" class="prev-step-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                        <i class="fas fa-arrow-left mr-2"></i> Atrás
+                                    </button>
+                                    <button type="button" class="next-step-btn px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Siguiente <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3: Review -->
+                            <div class="step-content px-6 py-6 hidden" id="step-content-3">
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Revisa la información de tu proyecto</h3>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h4 class="font-medium text-gray-800 mb-2">Información básica</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <p class="text-sm text-gray-500">Nombre del proyecto</p>
+                                                <p class="font-medium" id="review-name">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-500">Curso/Materia</p>
+                                                <p class="font-medium" id="review-course">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-500">Prioridad</p>
+                                                <p class="font-medium" id="review-priority">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h4 class="font-medium text-gray-800 mb-2">Detalles</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="md:col-span-2">
+                                                <p class="text-sm text-gray-500">Descripción</p>
+                                                <div class="prose max-w-none" id="review-description">
+                                                    <p class="text-gray-500 italic">No se proporcionó descripción</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-500">Fechas</p>
+                                                <p class="font-medium" id="review-dates">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-500">Etiquetas</p>
+                                                <div class="flex flex-wrap gap-1" id="review-tags">
+                                                    <span class="text-gray-500 italic">No hay etiquetas</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-500">Recordatorio</p>
+                                                <p class="font-medium" id="review-reminder">No activado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <button type="button" class="prev-step-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                        <i class="fas fa-arrow-left mr-2"></i> Atrás
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        <i class="fas fa-check-circle mr-2"></i> Crear Proyecto
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <i class="fas fa-check text-green-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">¡Proyecto creado con éxito!</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Tu proyecto ha sido registrado correctamente. Ahora puedes comenzar a agregar tareas y seguimiento.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-6">
+                    <button type="button" id="modalCloseBtn" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                        Ir al listado de proyectos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sidebar toggle for mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-open');
+        });
+        
+        // Wizard navigation
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        // Function to update step indicators
+        function updateSteps() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                const stepContent = document.getElementById(`step-content-${i}`);
+                
+                if (i < currentStep) {
+                    // Completed steps
+                    stepElement.classList.remove('active');
+                    stepElement.classList.add('completed');
+                    stepElement.querySelector('.step').classList.remove('border-indigo-600', 'text-gray-500');
+                    stepElement.querySelector('.step').classList.add('bg-indigo-100', 'border-indigo-100', 'text-indigo-600');
+                    stepElement.querySelector('.step-number').classList.add('hidden');
+                    stepElement.querySelector('.step-completed').classList.remove('hidden');
+                    stepElement.querySelector('.step-title').classList.remove('text-gray-500');
+                    stepElement.querySelector('.step-title').classList.add('text-indigo-600');
+                    
+                    if (stepContent) stepContent.classList.add('hidden');
+                } else if (i === currentStep) {
+                    // Current step
+                    stepElement.classList.add('active');
+                    stepElement.classList.remove('completed');
+                    stepElement.querySelector('.step').classList.remove('bg-indigo-100', 'border-indigo-100', 'text-gray-500');
+                    stepElement.querySelector('.step').classList.add('border-indigo-600', 'bg-indigo-600', 'text-white');
+                    stepElement.querySelector('.step-number').classList.remove('hidden');
+                    stepElement.querySelector('.step-completed').classList.add('hidden');
+                    stepElement.querySelector('.step-title').classList.remove('text-gray-500');
+                    stepElement.querySelector('.step-title').classList.add('text-indigo-600');
+                    
+                    if (stepContent) {
+                        stepContent.classList.remove('hidden');
+                        stepContent.classList.add('fade-in');
+                    }
+                } else {
+                    // Future steps
+                    stepElement.classList.remove('active', 'completed');
+                    stepElement.querySelector('.step').classList.remove('border-indigo-600', 'bg-indigo-600', 'bg-indigo-100', 'border-indigo-100', 'text-indigo-600');
+                    stepElement.querySelector('.step').classList.add('border-gray-300', 'text-gray-500');
+                    stepElement.querySelector('.step-number').classList.remove('hidden');
+                    stepElement.querySelector('.step-completed').classList.add('hidden');
+                    stepElement.querySelector('.step-title').classList.remove('text-indigo-600');
+                    stepElement.querySelector('.step-title').classList.add('text-gray-500');
+                    
+                    if (stepContent) stepContent.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Next step button
+        document.querySelectorAll('.next-step-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Validate current step before proceeding
+                if (currentStep === 1) {
+                    if (!validateStep1()) return;
+                    updateReviewData();
+                } else if (currentStep === 2) {
+                    if (!validateStep2()) return;
+                    updateReviewData();
+                }
+                
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateSteps();
+                }
+            });
+        });
+        
+        // Previous step button
+        document.querySelectorAll('.prev-step-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateSteps();
+                }
+            });
+        });
+        
+        // Validate step 1
+        function validateStep1() {
+            const projectName = document.getElementById('projectName').value;
+            const projectCourse = document.getElementById('projectCourse').value;
+            const prioritySelected = document.querySelector('input[name="priority"]:checked');
+            
+            if (!projectName) {
+                alert('Por favor ingresa un nombre para el proyecto');
+                return false;
+            }
+            
+            if (!projectCourse) {
+                alert('Por favor selecciona un curso');
+                return false;
+            }
+            
+            if (!prioritySelected) {
+                alert('Por favor selecciona una prioridad');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Validate step 2 (minimal validation for demo)
+        function validateStep2() {
+            const dueDate = document.getElementById('dueDate').value;
+            
+            if (!dueDate) {
+                alert('Por favor ingresa una fecha de entrega');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Update review data
+        function updateReviewData() {
+            // Basic info
+            document.getElementById('review-name').textContent = document.getElementById('projectName').value;
+            
+            const courseSelect = document.getElementById('projectCourse');
+            document.getElementById('review-course').textContent = courseSelect.options[courseSelect.selectedIndex].text;
+            
+            const priority = document.querySelector('input[name="priority"]:checked');
+            if (priority) {
+                document.getElementById('review-priority').textContent = 
+                    priority.value === 'high' ? 'Alta' : 
+                    priority.value === 'medium' ? 'Media' : 'Baja';
+            }
+            
+            // Details
+            const descriptionContent = document.getElementById('projectDescription').innerHTML;
+            if (descriptionContent.trim()) {
+                document.getElementById('review-description').innerHTML = descriptionContent;
+            }
+            
+            // Dates
+            const startDate = document.getElementById('startDate').value;
+            const dueDate = document.getElementById('dueDate').value;
+            
+            if (startDate || dueDate) {
+                let datesText = '';
+                if (startDate) datesText += `Inicio: ${formatDate(startDate)} `;
+                if (dueDate) datesText += `- Entrega: ${formatDate(dueDate)}`;
+                document.getElementById('review-dates').textContent = datesText;
+            }
+            
+            // Tags
+            const tagsContainer = document.getElementById('review-tags');
+            tagsContainer.innerHTML = '';
+            
+            const tags = document.querySelectorAll('#projectTags ~ span');
+            if (tags.length > 0) {
+                tags.forEach(tag => {
+                    const clone = tag.cloneNode(true);
+                    clone.querySelector('button').remove();
+                    tagsContainer.appendChild(clone);
+                });
+            } else {
+                tagsContainer.innerHTML = '<span class="text-gray-500 italic">No hay etiquetas</span>';
+            }
+            
+            // Reminder
+            const reminderEnabled = document.getElementById('enableReminder').checked;
+            if (reminderEnabled) {
+                const days = document.getElementById('reminderDays').value;
+                const time = formatTime(document.getElementById('reminderTime').value);
+                document.getElementById('review-reminder').textContent = `${days} día(s) antes a las ${time}`;
+            } else {
+                document.getElementById('review-reminder').textContent = 'No activado';
+            }
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+        
+        // Format time for display
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            return new Date(`1970-01-01T${timeString}`).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Reminder toggle
+        document.getElementById('enableReminder').addEventListener('change', function() {
+            const reminderOptions = document.getElementById('reminderOptions');
+            if (this.checked) {
+                reminderOptions.classList.remove('hidden');
+            } else {
+                reminderOptions.classList.add('hidden');
+            }
+        });
+        
+        // Tags input
+        document.getElementById('projectTags').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = this.value.trim();
+                if (value) {
+                    addTag(value);
+                    this.value = '';
+                }
+            }
+        });
+        
+        function addTag(value) {
+            const container = document.getElementById('projectTags').parentNode;
+            
+            const newTag = document.createElement('span');
+            newTag.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800';
+            newTag.innerHTML = `${value} <button type="button" class="ml-1.5 inline-flex text-blue-500 hover:text-blue-700"><i class="fas fa-times"></i></button>`;
+            
+            // Insert before the input
+            container.insertBefore(newTag, document.getElementById('projectTags'));
+            
+            // Add delete event
+            newTag.querySelector('button').addEventListener('click', function() {
+                newTag.remove();
+            });
+        }
+        
+        // Form submission
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Here you would typically send data to server
+            // For demo, we'll just show success modal
+            
+            document.getElementById('successModal').classList.remove('hidden');
+        });
+        
+        // Close modal
+        document.getElementById('modalCloseBtn').addEventListener('click', function() {
+            document.getElementById('successModal').classList.add('hidden');
+            // Redirigir al listado de proyectos
+            window.location.href = 'proyectos/lista.html';
+        });
+        
+        // Initialize steps
+        updateSteps();
+    </script>
+</body>
+</html>

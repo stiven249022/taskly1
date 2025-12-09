@@ -1,0 +1,190 @@
+================================================================================
+              RESUMEN RÁPIDO DE COORDINACIÓN - TASKLY
+                    Guía de Consulta Rápida
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    DIAGRAMA DE DEPENDENCIAS                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+                    [INTEGRANTE 1]
+                    Autenticación
+                    ↓ ↓ ↓
+        ┌───────────┼───────────┐
+        ↓           ↓           ↓
+   [INTEGRANTE 2] [INTEGRANTE 3] [INTEGRANTE 4]
+   Tareas/        Cursos/        Paneles
+   Proyectos      Recordatorios  Admin/Teacher
+        ↓           ↓           ↓
+        └───────────┼───────────┘
+                    ↓
+            [BASE COMPARTIDA]
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    ARCHIVOS COMPARTIDOS                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+TODOS DEBEN TENER:
+✓ composer.json / package.json (NO modificar sin consultar)
+✓ .env.example (mantener actualizado)
+✓ config/*.php (coordinación necesaria)
+✓ resources/views/layouts/*.blade.php
+✓ resources/views/components/*.blade.php
+✓ routes/web.php (cada uno agrega sus rutas)
+✓ resources/css/app.css
+✓ resources/js/app.js
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    CONEXIONES ENTRE INTEGRANTES                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1 → 2: Autenticación → Tareas/Proyectos
+   - User model
+   - auth()->user(), auth()->id()
+   - Roles (teacher para calificar)
+
+1 → 3: Autenticación → Cursos/Recordatorios
+   - User model
+   - auth()->user() para dashboard
+   - Sesiones
+
+1 → 4: Autenticación → Paneles
+   - User model completo
+   - Sistema de roles
+   - Middleware de roles
+
+2 → 3: Tareas/Proyectos → Calendario
+   - Task model (fechas para calendario)
+   - Project model (fechas para calendario)
+   - Course model (asociar tareas)
+
+2 → 4: Tareas/Proyectos → Panel Profesores
+   - Task/Project models
+   - Sistema de calificaciones
+   - teacher_id para asignaciones
+
+3 → 4: Recordatorios → Notificaciones
+   - Reminder model
+   - Eventos del calendario
+   - Datos para notificaciones
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    BASE DE DATOS COMPARTIDA                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+INTEGRANTE 1: users, personal_access_tokens, otp_codes
+INTEGRANTE 2: tasks, projects, project_tasks
+INTEGRANTE 3: courses, reminders, tags, task_tag
+INTEGRANTE 4: teacher_student_assignments, notifications
+
+RELACIONES IMPORTANTES:
+- tasks.user_id → users.id
+- tasks.course_id → courses.id
+- tasks.teacher_id → users.id
+- projects.user_id → users.id
+- reminders.user_id → users.id
+- courses.user_id → users.id
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    CONVENCIONES DE CÓDIGO                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+RUTAS: {recurso}.{accion} (tasks.index, projects.create)
+VARIABLES: camelCase ($userName), snake_case en BD (user_id)
+CLASES: PascalCase (TaskController)
+VISTAS: kebab-case (create-task.blade.php)
+MENSAJES: 'success', 'error', 'warning', 'info'
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    FLUJO DE TRABAJO                                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. PLANIFICACIÓN: Todos juntos, definir estructura
+2. CONFIGURACIÓN: Todos, mismo .env y base de datos
+3. INTEGRANTE 1: Primero (autenticación base)
+4. INTEGRANTES 2,3,4: En paralelo (usando auth de 1)
+5. INTEGRACIÓN: Reunión para combinar partes
+6. DOCUMENTACIÓN: Cada uno documenta su parte
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    CHECKLIST ANTES DE CAMBIOS                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+ARCHIVOS COMPARTIDOS:
+□ ¿Consulté con el equipo?
+□ ¿Mi cambio rompe algo?
+□ ¿Probé localmente?
+
+NUEVAS DEPENDENCIAS:
+□ ¿Es realmente necesaria?
+□ ¿Consulté con el equipo?
+□ ¿Actualicé composer.json?
+
+NUEVAS MIGRACIONES:
+□ ¿Esta tabla ya existe?
+□ ¿Afecta otras tablas?
+□ ¿Coordiné con afectados?
+
+NUEVAS RUTAS:
+□ ¿Nombre único y descriptivo?
+□ ¿Sigo convenciones?
+□ ¿Agregué middleware?
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    COMUNICACIÓN                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+COMUNICAR INMEDIATAMENTE:
+- Cambios en BD
+- Nuevas dependencias
+- Cambios en archivos compartidos
+- Problemas que afectan otros
+
+COMUNICAR PERIÓDICAMENTE:
+- Progreso
+- Funcionalidades completadas
+- Dudas
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    EJEMPLOS RÁPIDOS                                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+OBTENER USUARIO ACTUAL:
+$user = auth()->user();
+$userId = auth()->id();
+
+VERIFICAR ROL:
+if (auth()->user()->hasRole('teacher')) { ... }
+
+USAR MODELO DE OTRO INTEGRANTE:
+// Integrante 2 usa Course de Integrante 3
+$courses = Course::where('user_id', auth()->id())->get();
+
+// Integrante 3 usa Task de Integrante 2
+$tasks = Task::where('user_id', auth()->id())->get();
+
+APLICAR MIDDLEWARE:
+Route::middleware(['auth', 'role:teacher'])->group(...);
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    CONTACTOS Y RECURSOS                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+DOCUMENTOS COMPLETOS:
+- DIVISION_PROYECTO_4_PARTES.txt (división detallada)
+- GUIA_COORDINACION_INTEGRANTES.txt (guía completa)
+- CONEXIONES_PROYECTO.txt (todas las conexiones)
+
+RECORDAR:
+✓ Integrante 1 es base para todos
+✓ Comunicar cambios importantes
+✓ Probar antes de integrar
+✓ Documentar mientras desarrollas
+✓ Respetar trabajo de otros
+
+================================================================================
+                    FIN DEL RESUMEN
+================================================================================
+
+Para más detalles, consultar: GUIA_COORDINACION_INTEGRANTES.txt
+

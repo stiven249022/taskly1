@@ -1,0 +1,869 @@
+================================================================================
+              DIVISIÓN DEL PROYECTO TASKLY EN 4 PARTES
+                    Temas para cada Integrante
+================================================================================
+
+Este documento divide el proyecto Taskly en 4 partes lógicas para que cada
+integrante del equipo pueda trabajar de forma independiente y documentar
+su parte en su repositorio.
+
+================================================================================
+                    PARTE 1: AUTENTICACIÓN Y USUARIOS
+                    Integrante 1 - Backend & Frontend
+================================================================================
+
+RESPONSABILIDADES:
+- Sistema de autenticación completo
+- Gestión de usuarios y perfiles
+- Roles y permisos
+- API de autenticación
+- Integración con Google OAuth
+
+ARCHIVOS Y CARPETAS A DOCUMENTAR:
+
+1. CONTROLADORES:
+   ✓ app/Http/Controllers/Auth/
+      - AuthenticatedSessionController.php (Login/Logout)
+      - RegisteredUserController.php (Registro)
+      - PasswordController.php (Cambio de contraseña)
+      - PasswordResetLinkController.php (Recuperar contraseña)
+      - NewPasswordController.php (Resetear contraseña)
+      - EmailVerificationPromptController.php (Verificación email)
+      - EmailVerificationNotificationController.php (Notificación email)
+      - VerifyEmailController.php (Verificar email)
+      - GoogleController.php (Autenticación Google Web)
+      - OtpVerificationController.php (Verificación OTP)
+      - ConfirmablePasswordController.php (Confirmar contraseña)
+   
+   ✓ app/Http/Controllers/Api/
+      - AuthController.php (API: registro, login, logout, perfil)
+      - EmailVerificationController.php (API: verificación email)
+      - GoogleAuthController.php (API: autenticación Google)
+
+2. MODELOS:
+   ✓ app/Models/User.php
+   ✓ app/Models/OtpCode.php
+
+3. VISTAS:
+   ✓ resources/views/auth/
+      - login.blade.php
+      - register.blade.php
+      - forgot-password.blade.php
+      - reset-password.blade.php
+      - verify-email.blade.php
+      - verify-otp.blade.php
+      - confirm-password.blade.php
+   
+   ✓ resources/views/profile/
+      - index.blade.php
+      - edit.blade.php
+      - preferences.blade.php
+      - partials/update-profile-information-form.blade.php
+      - partials/update-password-form.blade.php
+      - partials/delete-user-form.blade.php
+
+4. RUTAS:
+   ✓ routes/auth.php (Todas las rutas de autenticación)
+   ✓ routes/api.php (Sección de autenticación: líneas 25-77)
+
+5. MIDDLEWARE:
+   ✓ app/Http/Middleware/EnsureEmailIsVerified.php
+   ✓ app/Http/Middleware/RoleMiddleware.php (si existe)
+   ✓ app/Http/Middleware/CheckRole.php
+
+6. NOTIFICACIONES:
+   ✓ app/Notifications/VerifyEmailNotification.php
+   ✓ app/Notifications/OtpVerificationNotification.php
+
+7. CONFIGURACIÓN:
+   ✓ config/auth.php
+   ✓ config/sanctum.php
+   ✓ config/socialite.php
+   ✓ config/services.php (sección Google)
+
+8. MIGRACIONES:
+   ✓ database/migrations/..._create_users_table.php
+   ✓ database/migrations/..._create_personal_access_tokens_table.php
+   ✓ database/migrations/..._create_otp_codes_table.php (si existe)
+
+9. POLÍTICAS:
+   - (No hay políticas específicas de usuario, pero documentar el sistema de roles)
+
+TEMAS A DOCUMENTAR EN EL REPOSITORIO:
+
+1. SISTEMA DE AUTENTICACIÓN
+   - Registro de usuarios
+   - Inicio de sesión
+   - Cierre de sesión
+   - Recuperación de contraseña
+   - Cambio de contraseña
+   - Verificación de email
+   - Verificación OTP (código de un solo uso)
+
+2. AUTENTICACIÓN CON GOOGLE OAUTH 2.0
+   - Configuración de Google Cloud Console
+   - Flujo de autenticación OAuth
+   - Integración con Laravel Socialite
+   - Callback y manejo de tokens
+   - API endpoints para Google Auth
+
+3. API REST DE AUTENTICACIÓN
+   - POST /api/auth/register
+   - POST /api/auth/login
+   - POST /api/auth/logout
+   - GET /api/auth/me
+   - POST /api/auth/profile
+   - POST /api/email/send-verification
+   - GET /api/email/verification-status
+   - POST /api/email/resend-verification
+   - GET /api/email/verify/{id}/{hash}
+   - GET /api/auth/google/url
+   - GET /api/auth/google/callback
+   - GET /api/auth/google/status
+   - POST /api/auth/google/disconnect
+
+4. GESTIÓN DE PERFILES
+   - Edición de perfil de usuario
+   - Actualización de información personal
+   - Cambio de contraseña
+   - Preferencias de usuario
+   - Eliminación de cuenta
+   - Foto de perfil
+
+5. SISTEMA DE ROLES
+   - Roles disponibles: student, teacher, admin
+   - Middleware de verificación de roles
+   - Asignación de roles
+   - Permisos por rol
+
+6. LARAVEL SANCTUM
+   - Configuración de tokens de acceso
+   - Generación de tokens
+   - Autenticación mediante tokens
+   - Revocación de tokens
+
+7. SEGURIDAD
+   - Hash de contraseñas (bcrypt)
+   - Protección CSRF
+   - Validación de datos
+   - Sanitización de inputs
+
+INFORMACIÓN TÉCNICA A INCLUIR:
+- Diagramas de flujo de autenticación
+- Ejemplos de requests/responses de la API
+- Configuración de variables de entorno necesarias
+- Instrucciones de instalación y configuración
+- Casos de uso y ejemplos
+- Troubleshooting común
+
+================================================================================
+              PARTE 2: GESTIÓN DE TAREAS Y PROYECTOS
+              Integrante 2 - Backend & Frontend
+================================================================================
+
+RESPONSABILIDADES:
+- CRUD completo de tareas
+- CRUD completo de proyectos
+- Subtareas de proyectos
+- Gestión de archivos
+- Sistema de calificaciones
+- Asignación de tareas por profesores
+
+ARCHIVOS Y CARPETAS A DOCUMENTAR:
+
+1. CONTROLADORES:
+   ✓ app/Http/Controllers/TaskController.php
+   ✓ app/Http/Controllers/ProjectController.php
+   ✓ app/Http/Controllers/ProjectTaskController.php
+   ✓ app/Http/Controllers/TaskFileController.php
+   ✓ app/Http/Controllers/ProjectFileController.php
+
+2. MODELOS:
+   ✓ app/Models/Task.php
+   ✓ app/Models/Project.php
+   ✓ app/Models/ProjectTask.php
+
+3. VISTAS:
+   ✓ resources/views/tasks/
+      - index.blade.php
+      - create.blade.php
+      - edit.blade.php
+      - show.blade.php
+      - form.blade.php
+      - teacher-index.blade.php
+   
+   ✓ resources/views/projects/
+      - index.blade.php
+      - create.blade.php
+      - edit.blade.php
+      - show.blade.php
+      - form.blade.php
+      - teacher-index.blade.php
+      - tasks/index.blade.php (subtareas)
+   
+   ✓ resources/views/files/
+      - viewer.blade.php
+
+4. RUTAS:
+   ✓ routes/web.php (Secciones de tareas y proyectos: líneas 73-118)
+
+5. POLÍTICAS:
+   ✓ app/Policies/TaskPolicy.php
+   ✓ app/Policies/ProjectPolicy.php
+
+6. JOBS:
+   ✓ app/Jobs/ProcessTaskCompletion.php
+
+7. NOTIFICACIONES:
+   ✓ app/Notifications/TaskDueSoonNotification.php
+   ✓ app/Notifications/ProjectDueSoonNotification.php
+   ✓ app/Notifications/GradeNotification.php
+
+8. MIGRACIONES:
+   ✓ database/migrations/..._create_tasks_table.php
+   ✓ database/migrations/..._create_projects_table.php
+   ✓ database/migrations/..._create_project_tasks_table.php
+
+TEMAS A DOCUMENTAR EN EL REPOSITORIO:
+
+1. GESTIÓN DE TAREAS
+   - Crear tarea
+   - Editar tarea
+   - Eliminar tarea
+   - Listar tareas
+   - Ver detalle de tarea
+   - Cambiar estado de tarea (completada/pendiente)
+   - Filtrar tareas por curso, estado, prioridad
+   - Asignar tareas a estudiantes (profesores)
+   - Tipos de tareas: homework, exam, project, other
+
+2. GESTIÓN DE PROYECTOS
+   - Crear proyecto
+   - Editar proyecto
+   - Eliminar proyecto
+   - Listar proyectos
+   - Ver detalle de proyecto
+   - Cambiar estado de proyecto
+   - Actualizar progreso de proyecto
+   - Organización por categorías
+
+3. SUBTAREAS DE PROYECTOS
+   - Crear subtarea dentro de proyecto
+   - Editar subtarea
+   - Eliminar subtarea
+   - Listar subtareas
+   - Cambiar estado de subtarea
+   - Reordenar subtareas
+   - Gestión de archivos en subtareas
+
+4. SISTEMA DE ARCHIVOS
+   - Subir archivos a tareas
+   - Subir archivos a proyectos
+   - Subir archivos a subtareas
+   - Ver archivos en el navegador
+   - Descargar archivos
+   - Eliminar archivos
+   - Material de apoyo (profesores)
+   - Validación de tipos de archivo
+   - Límites de tamaño
+
+5. SISTEMA DE CALIFICACIONES
+   - Calificar tareas (profesores)
+   - Calificar proyectos (profesores)
+   - Calificar subtareas (profesores)
+   - Agregar feedback
+   - Ver calificaciones (estudiantes)
+   - Historial de calificaciones
+   - Fecha de calificación
+
+6. RELACIONES ENTRE MODELOS
+   - Tarea pertenece a Usuario
+   - Tarea pertenece a Curso
+   - Tarea pertenece a Profesor
+   - Proyecto pertenece a Usuario
+   - Subtarea pertenece a Proyecto
+   - Tareas tienen etiquetas (many-to-many)
+
+7. FUNCIONALIDADES ESPECIALES
+   - Notificaciones de tareas próximas a vencer
+   - Notificaciones de proyectos próximos a vencer
+   - Notificaciones de calificaciones
+   - Procesamiento de tareas completadas (Jobs)
+   - Búsqueda de tareas y proyectos
+
+8. VISTAS DE PROFESORES
+   - Ver todas las tareas de estudiantes
+   - Ver todos los proyectos de estudiantes
+   - Crear tareas para estudiantes
+   - Crear proyectos para estudiantes
+   - Calificar trabajos
+
+INFORMACIÓN TÉCNICA A INCLUIR:
+- Diagrama ER de las relaciones
+- Flujo de creación de tarea/proyecto
+- Estructura de datos de tareas y proyectos
+- Ejemplos de uso de la API (si hay endpoints)
+- Validaciones implementadas
+- Reglas de negocio
+- Casos de uso completos
+- Ejemplos de código
+
+================================================================================
+        PARTE 3: CURSOS, RECORDATORIOS Y CALENDARIO
+        Integrante 3 - Backend & Frontend
+================================================================================
+
+RESPONSABILIDADES:
+- Gestión de cursos
+- Sistema de recordatorios
+- Calendario y eventos
+- Etiquetas (tags)
+- Búsqueda global
+- Dashboard principal
+
+ARCHIVOS Y CARPETAS A DOCUMENTAR:
+
+1. CONTROLADORES:
+   ✓ app/Http/Controllers/CourseController.php
+   ✓ app/Http/Controllers/ReminderController.php
+   ✓ app/Http/Controllers/CalendarController.php
+   ✓ app/Http/Controllers/TagController.php
+   ✓ app/Http/Controllers/SearchController.php
+   ✓ app/Http/Controllers/DashboardController.php
+
+2. MODELOS:
+   ✓ app/Models/Course.php
+   ✓ app/Models/Reminder.php
+   ✓ app/Models/Tag.php
+
+3. VISTAS:
+   ✓ resources/views/courses/
+      - index.blade.php
+      - create.blade.php
+      - edit.blade.php
+      - show.blade.php
+      - form.blade.php
+   
+   ✓ resources/views/reminders/
+      - index.blade.php
+      - form.blade.php
+   
+   ✓ resources/views/recordatorios/
+      - index.blade.php
+   
+   ✓ resources/views/calendario/
+      - index.blade.php
+   
+   ✓ resources/views/tags/
+      - index.blade.php
+      - form.blade.php
+   
+   ✓ resources/views/search/
+      - results.blade.php
+   
+   ✓ resources/views/dashboard.blade.php
+   ✓ resources/views/components/upcoming-events-widget.blade.php
+
+4. RUTAS:
+   ✓ routes/web.php (Secciones de cursos, recordatorios, calendario, tags, búsqueda, dashboard)
+
+5. POLÍTICAS:
+   ✓ app/Policies/CoursePolicy.php
+   ✓ app/Policies/ReminderPolicy.php
+   ✓ app/Policies/TagPolicy.php
+
+6. NOTIFICACIONES:
+   ✓ app/Notifications/ExamReminderNotification.php
+   ✓ app/Notifications/NewEventNotification.php
+   ✓ app/Notifications/UpcomingEventNotification.php
+
+7. MIGRACIONES:
+   ✓ database/migrations/..._create_courses_table.php
+   ✓ database/migrations/..._create_reminders_table.php
+   ✓ database/migrations/..._create_tags_table.php
+   ✓ database/migrations/..._create_task_tag_table.php (si existe)
+
+TEMAS A DOCUMENTAR EN EL REPOSITORIO:
+
+1. GESTIÓN DE CURSOS
+   - Crear curso
+   - Editar curso
+   - Eliminar curso
+   - Listar cursos
+   - Ver detalle de curso
+   - Asociar tareas con cursos
+   - Organización académica
+   - Relación curso-usuario
+
+2. SISTEMA DE RECORDATORIOS
+   - Crear recordatorio
+   - Editar recordatorio
+   - Eliminar recordatorio
+   - Listar recordatorios
+   - Cambiar estado de recordatorio
+   - Notificaciones de recordatorios
+   - Recordatorios de exámenes
+   - Programación de recordatorios
+
+3. CALENDARIO Y EVENTOS
+   - Vista de calendario
+   - Crear evento
+   - Editar evento
+   - Eliminar evento
+   - Visualización de tareas en calendario
+   - Visualización de proyectos en calendario
+   - Visualización de recordatorios en calendario
+   - Eventos próximos
+   - Widget de eventos próximos
+
+4. SISTEMA DE ETIQUETAS (TAGS)
+   - Crear etiqueta
+   - Editar etiqueta
+   - Eliminar etiqueta
+   - Asociar etiquetas a tareas
+   - Filtrar por etiquetas
+   - Organización por etiquetas
+
+5. BÚSQUEDA GLOBAL
+   - Búsqueda de tareas
+   - Búsqueda de proyectos
+   - Búsqueda de cursos
+   - Búsqueda de recordatorios
+   - Resultados de búsqueda
+   - Filtros de búsqueda
+
+6. DASHBOARD PRINCIPAL
+   - Vista general del dashboard
+   - Estadísticas de tareas
+   - Estadísticas de proyectos
+   - Tareas próximas a vencer
+   - Proyectos próximos a vencer
+   - Recordatorios próximos
+   - Eventos del calendario
+   - Widgets informativos
+
+7. NOTIFICACIONES RELACIONADAS
+   - Notificaciones de recordatorios de exámenes
+   - Notificaciones de nuevos eventos
+   - Notificaciones de eventos próximos
+   - Configuración de notificaciones
+
+8. RELACIONES ENTRE MODELOS
+   - Curso pertenece a Usuario
+   - Tarea pertenece a Curso
+   - Recordatorio pertenece a Usuario
+   - Tarea tiene muchas Etiquetas (many-to-many)
+   - Proyecto tiene muchas Etiquetas (si aplica)
+
+9. FUNCIONALIDADES ESPECIALES
+   - Integración calendario-tareas-proyectos
+   - Vista consolidada de eventos
+   - Filtros avanzados
+   - Exportación de datos (si existe)
+
+INFORMACIÓN TÉCNICA A INCLUIR:
+- Diagrama de relaciones entre cursos, tareas y recordatorios
+- Flujo de creación de recordatorio
+- Estructura de datos del calendario
+- Algoritmo de búsqueda
+- Lógica de eventos próximos
+- Casos de uso completos
+- Ejemplos de integración
+- Configuración de notificaciones
+
+================================================================================
+    PARTE 4: PANEL DE PROFESORES Y ADMINISTRADORES
+    Integrante 4 - Backend & Frontend
+================================================================================
+
+RESPONSABILIDADES:
+- Dashboard de profesores
+- Dashboard de administradores
+- Sistema de asignaciones profesor-estudiante
+- Reportes y analytics
+- Configuración del sistema
+- Gestión de usuarios (admin)
+- Notificaciones avanzadas
+
+ARCHIVOS Y CARPETAS A DOCUMENTAR:
+
+1. CONTROLADORES:
+   ✓ app/Http/Controllers/TeacherDashboardController.php
+   ✓ app/Http/Controllers/AdminDashboardController.php
+   ✓ app/Http/Controllers/AdminSettingsController.php
+   ✓ app/Http/Controllers/NotificationController.php
+   ✓ app/Http/Controllers/SettingsController.php
+   ✓ app/Http/Controllers/Api/NotificationController.php
+
+2. MODELOS:
+   ✓ app/Models/TeacherStudentAssignment.php
+
+3. VISTAS:
+   ✓ resources/views/teacher/
+      - dashboard.blade.php
+      - students.blade.php
+      - tasks.blade.php
+      - projects.blade.php
+      - grades.blade.php
+      - analytics.blade.php
+      - assign-students.blade.php
+      - create-task.blade.php
+      - create-project.blade.php
+   
+   ✓ resources/views/admin/
+      - dashboard.blade.php
+      - users.blade.php
+      - teachers.blade.php
+      - assign-students.blade.php
+      - create-teacher.blade.php
+      - reports.blade.php
+      - settings.blade.php
+      - logs.blade.php
+   
+   ✓ resources/views/notifications/
+      - index.blade.php
+      - settings.blade.php
+   
+   ✓ resources/views/settings/
+      - index.blade.php
+      - general.blade.php
+      - notifications.blade.php
+      - security.blade.php
+      - profile.blade.php
+      - api.blade.php
+      - backup.blade.php
+      - email.blade.php
+      - email-templates.blade.php
+      - integrations.blade.php
+      - logs.blade.php
+      - roles.blade.php
+      - themes.blade.php
+      - users.blade.php
+   
+   ✓ resources/views/reports/
+      - index.blade.php
+      - detail.blade.php
+   
+   ✓ resources/views/layouts/
+      - teacher.blade.php
+      - admin.blade.php
+
+4. RUTAS:
+   ✓ routes/web.php (Secciones de teacher y admin: líneas 212-279)
+
+5. MIGRACIONES:
+   ✓ database/migrations/..._create_teacher_student_assignments_table.php
+
+6. SEEDERS:
+   ✓ database/seeders/TeacherStudentAssignmentSeeder.php
+
+TEMAS A DOCUMENTAR EN EL REPOSITORIO:
+
+1. DASHBOARD DE PROFESORES
+   - Vista general del dashboard
+   - Lista de estudiantes asignados
+   - Tareas de estudiantes
+   - Proyectos de estudiantes
+   - Calificaciones
+   - Analytics y estadísticas
+   - Crear tareas para estudiantes
+   - Crear proyectos para estudiantes
+   - Asignar estudiantes a clases
+   - Gestión de nombres de clases
+
+2. DASHBOARD DE ADMINISTRADORES
+   - Vista general del dashboard
+   - Gestión de usuarios
+   - Gestión de profesores
+   - Aprobar/rechazar usuarios
+   - Asignar roles
+   - Crear profesores
+   - Ver reportes del sistema
+   - Configuración del sistema
+   - Logs del sistema
+
+3. SISTEMA DE ASIGNACIONES
+   - Asignar estudiante a profesor
+   - Eliminar asignación
+   - Actualizar nombre de clase
+   - Ver asignaciones
+   - Relación profesor-estudiante
+   - Gestión de clases
+
+4. REPORTES Y ANALYTICS
+   - Reporte de usuarios
+   - Reporte de rendimiento de profesores
+   - Reporte de uso del sistema
+   - Reporte de profesor individual
+   - Exportación de reportes (CSV, PDF)
+   - Estadísticas de tareas
+   - Estadísticas de proyectos
+   - Métricas de uso
+
+5. GESTIÓN DE USUARIOS (ADMIN)
+   - Listar usuarios
+   - Ver detalle de usuario
+   - Aprobar usuarios pendientes
+   - Rechazar usuarios
+   - Asignar roles
+   - Cambiar estado de usuario
+   - Crear profesores
+
+6. CONFIGURACIÓN DEL SISTEMA
+   - Configuración general
+   - Configuración de seguridad
+   - Configuración de notificaciones
+   - Información de base de datos
+   - Backup de base de datos
+   - Limpiar caché
+   - Gestión de logs
+   - Configuración de email
+   - Plantillas de email
+   - Integraciones
+   - Temas
+   - Roles y permisos
+
+7. SISTEMA DE NOTIFICACIONES AVANZADO
+   - Enviar notificaciones de tareas
+   - Enviar notificaciones de proyectos
+   - Enviar notificaciones de exámenes
+   - Configuración de notificaciones
+   - Notificaciones automáticas
+   - API de notificaciones
+   - Gestión de preferencias de notificación
+
+8. CONFIGURACIÓN DE USUARIO
+   - Configuración general
+   - Configuración de notificaciones
+   - Seguridad y contraseñas
+   - Perfil
+   - Preferencias
+   - Exportar datos
+   - Eliminar cuenta
+
+9. API DE NOTIFICACIONES
+   - POST /api/notifications/task
+   - POST /api/notifications/project
+   - POST /api/notifications/exam
+   - GET /api/notifications/settings
+   - POST /api/notifications/settings
+   - POST /api/notifications/send-automatic
+
+10. FUNCIONALIDADES ESPECIALES
+    - Exportación de datos
+    - Backup automático
+    - Logs del sistema
+    - Analytics en tiempo real
+    - Filtros avanzados
+    - Búsqueda avanzada
+
+INFORMACIÓN TÉCNICA A INCLUIR:
+- Diagrama de roles y permisos
+- Flujo de aprobación de usuarios
+- Estructura de reportes
+- Algoritmos de analytics
+- Sistema de notificaciones
+- Configuración de seguridad
+- Casos de uso completos
+- Ejemplos de reportes generados
+- API endpoints documentados
+
+================================================================================
+                    ESTRUCTURA DE DOCUMENTACIÓN
+                    (Aplicable a todos los integrantes)
+================================================================================
+
+CADA INTEGRANTE DEBE INCLUIR EN SU REPOSITORIO:
+
+1. README.md PRINCIPAL
+   - Descripción de la parte del proyecto
+   - Tecnologías utilizadas
+   - Requisitos previos
+   - Instalación y configuración
+   - Estructura de archivos
+   - Funcionalidades implementadas
+
+2. DOCUMENTACIÓN TÉCNICA
+   - Arquitectura de la parte
+   - Diagramas de flujo
+   - Diagramas de base de datos (si aplica)
+   - Estructura de datos
+   - API endpoints (si aplica)
+   - Ejemplos de código
+
+3. GUÍAS DE USO
+   - Casos de uso
+   - Ejemplos prácticos
+   - Screenshots o capturas
+   - Flujos de usuario
+   - Troubleshooting
+
+4. CONFIGURACIÓN
+   - Variables de entorno necesarias
+   - Archivos de configuración
+   - Dependencias
+   - Migraciones necesarias
+
+5. TESTING (si aplica)
+   - Tests unitarios
+   - Tests de integración
+   - Casos de prueba
+
+6. DIAGRAMAS
+   - Diagrama de flujo de procesos principales
+   - Diagrama de relaciones de base de datos
+   - Diagrama de arquitectura
+   - Diagrama de componentes
+
+================================================================================
+                    ARCHIVOS COMPARTIDOS
+                    (Todos los integrantes necesitan)
+================================================================================
+
+Estos archivos son compartidos y deben estar en todos los repositorios:
+
+1. CONFIGURACIÓN BASE:
+   - composer.json
+   - package.json
+   - .env.example
+   - config/app.php
+   - config/database.php
+   - config/filesystems.php
+   - config/mail.php
+   - config/queue.php
+   - config/cache.php
+   - config/session.php
+
+2. LAYOUTS Y COMPONENTES:
+   - resources/views/layouts/app.blade.php
+   - resources/views/layouts/guest.blade.php
+   - resources/views/layouts/navigation.blade.php
+   - resources/views/components/* (componentes reutilizables)
+
+3. ASSETS:
+   - resources/css/app.css
+   - resources/js/app.js
+   - public/css/dark-mode.css
+   - public/js/dark-mode.js
+
+4. RUTAS BASE:
+   - routes/web.php (estructura base)
+   - routes/api.php (estructura base)
+   - routes/console.php
+
+5. MIDDLEWARE BASE:
+   - app/Http/Middleware/* (middleware compartido)
+
+6. CONFIGURACIÓN DE VITE:
+   - vite.config.js
+   - tailwind.config.js
+
+================================================================================
+                    CHECKLIST PARA CADA INTEGRANTE
+================================================================================
+
+ANTES DE SUBIR AL REPOSITORIO, VERIFICAR:
+
+□ README.md completo y detallado
+□ Documentación técnica incluida
+□ Diagramas creados
+□ Ejemplos de código documentados
+□ Variables de entorno documentadas
+□ Instrucciones de instalación claras
+□ Casos de uso documentados
+□ Screenshots o capturas (si aplica)
+□ Troubleshooting incluido
+□ Referencias a otras partes del proyecto
+□ Licencia o información del proyecto
+□ Información de contacto o contribuidores
+
+================================================================================
+                    COORDINACIÓN ENTRE INTEGRANTES
+================================================================================
+
+PUNTOS DE INTEGRACIÓN:
+
+1. INTEGRANTE 1 → INTEGRANTE 2:
+   - Sistema de autenticación usado por tareas/proyectos
+   - Roles necesarios para funcionalidades de profesores
+
+2. INTEGRANTE 1 → INTEGRANTE 3:
+   - Autenticación para cursos y recordatorios
+   - Sistema de usuarios para dashboard
+
+3. INTEGRANTE 1 → INTEGRANTE 4:
+   - Sistema de roles completo
+   - Autenticación para paneles admin/teacher
+
+4. INTEGRANTE 2 → INTEGRANTE 3:
+   - Tareas y proyectos aparecen en calendario
+   - Cursos asociados a tareas
+
+5. INTEGRANTE 2 → INTEGRANTE 4:
+   - Calificaciones visibles en panel de profesores
+   - Tareas/proyectos de estudiantes en dashboard teacher
+
+6. INTEGRANTE 3 → INTEGRANTE 4:
+   - Eventos del calendario en dashboard
+   - Recordatorios en notificaciones
+
+TODOS DEBEN COORDINAR:
+- Estructura de base de datos compartida
+- Nombres de rutas consistentes
+- Estilos y componentes UI
+- Variables de entorno comunes
+- Convenciones de código
+
+================================================================================
+                    FORMATO SUGERIDO PARA README.md
+================================================================================
+
+# [Nombre de la Parte] - Taskly
+
+## 📋 Descripción
+Breve descripción de la parte del proyecto
+
+## 🚀 Características
+- Lista de características principales
+
+## 🛠️ Tecnologías
+- Laravel 11
+- PHP 8.2
+- MySQL/SQLite
+- Tailwind CSS
+- Alpine.js
+
+## 📦 Instalación
+Pasos detallados de instalación
+
+## ⚙️ Configuración
+Variables de entorno necesarias
+
+## 📚 Documentación
+Enlaces a documentación detallada
+
+## 🎯 Funcionalidades
+Lista detallada de funcionalidades
+
+## 📊 Diagramas
+Enlaces a diagramas
+
+## 🔗 Integración con otras partes
+Cómo se integra con otras partes del proyecto
+
+## 👥 Contribuidores
+Nombres de los integrantes
+
+## 📝 Licencia
+Información de licencia
+
+================================================================================
+                    FIN DEL DOCUMENTO
+================================================================================
+
+Este documento divide el proyecto Taskly en 4 partes lógicas para facilitar
+el trabajo en equipo y la documentación individual de cada parte.
+
+Fecha de creación: 2025
+Versión del proyecto: Taskly v14.0.0
+

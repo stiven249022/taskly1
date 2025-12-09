@@ -1,0 +1,913 @@
+================================================================================
+                    CONEXIONES DEL PROYECTO TASKLY v14.0.0
+================================================================================
+
+Este documento describe todas las conexiones, configuraciones y endpoints
+del proyecto Taskly, incluyendo bases de datos, APIs externas, servicios
+y rutas disponibles.
+
+================================================================================
+1. CONEXIONES DE BASE DE DATOS
+================================================================================
+
+1.1 CONEXIÓN PREDETERMINADA
+   - Driver: SQLite (por defecto)
+   - Ubicación: database/database.sqlite
+   - Configuración: config/database.php
+   - Variable de entorno: DB_CONNECTION=sqlite
+
+1.2 CONEXIONES DISPONIBLES
+   
+   A) SQLite
+      - Driver: sqlite
+      - Archivo: database/database.sqlite
+      - Uso: Base de datos local por defecto
+      - Configuración: DB_DATABASE=database/database.sqlite
+   
+   B) MySQL
+      - Driver: mysql
+      - Host: 127.0.0.1 (configurable)
+      - Puerto: 3306 (configurable)
+      - Base de datos: taskly (configurable)
+      - Usuario: root (configurable)
+      - Contraseña: (configurable)
+      - Charset: utf8mb4
+      - Collation: utf8mb4_unicode_ci
+      - Variables de entorno:
+        * DB_CONNECTION=mysql
+        * DB_HOST=127.0.0.1
+        * DB_PORT=3306
+        * DB_DATABASE=taskly
+        * DB_USERNAME=root
+        * DB_PASSWORD=
+   
+   C) MariaDB
+      - Driver: mariadb
+      - Configuración similar a MySQL
+      - Variables de entorno: Mismas que MySQL
+   
+   D) PostgreSQL
+      - Driver: pgsql
+      - Host: 127.0.0.1
+      - Puerto: 5432
+      - Charset: utf8
+      - Variables de entorno:
+        * DB_CONNECTION=pgsql
+        * DB_HOST=127.0.0.1
+        * DB_PORT=5432
+        * DB_DATABASE=laravel
+        * DB_USERNAME=root
+        * DB_PASSWORD=
+   
+   E) SQL Server
+      - Driver: sqlsrv
+      - Host: localhost
+      - Puerto: 1433
+      - Variables de entorno:
+        * DB_CONNECTION=sqlsrv
+        * DB_HOST=localhost
+        * DB_PORT=1433
+        * DB_DATABASE=laravel
+        * DB_USERNAME=root
+        * DB_PASSWORD=
+
+1.3 REDIS (CACHE Y SESIONES)
+   - Cliente: phpredis (por defecto)
+   - Host: 127.0.0.1
+   - Puerto: 6379
+   - Base de datos por defecto: 0
+   - Base de datos para cache: 1
+   - Variables de entorno:
+     * REDIS_CLIENT=phpredis
+     * REDIS_HOST=127.0.0.1
+     * REDIS_PORT=6379
+     * REDIS_PASSWORD=null
+     * REDIS_DB=0
+     * REDIS_CACHE_DB=1
+
+================================================================================
+2. CONEXIONES DE EMAIL (SMTP)
+================================================================================
+
+2.1 CONFIGURACIÓN PREDETERMINADA
+   - Mailer: SMTP
+   - Host: smtp.gmail.com (configurable)
+   - Puerto: 587
+   - Encriptación: TLS
+   - Variables de entorno:
+     * MAIL_MAILER=smtp
+     * MAIL_HOST=smtp.gmail.com
+     * MAIL_PORT=587
+     * MAIL_USERNAME=tu-email@gmail.com
+     * MAIL_PASSWORD=tu-app-password
+     * MAIL_ENCRYPTION=tls
+     * MAIL_FROM_ADDRESS=tu-email@gmail.com
+     * MAIL_FROM_NAME="Taskly"
+
+2.2 SERVICIOS DE EMAIL DISPONIBLES
+   
+   A) SMTP (Simple Mail Transfer Protocol)
+      - Transport: smtp
+      - Uso: Servidores SMTP estándar (Gmail, Outlook, etc.)
+      - Configuración: config/mail.php
+   
+   B) Mailgun
+      - Transport: mailgun
+      - Variables de entorno:
+        * MAILGUN_DOMAIN
+        * MAILGUN_SECRET
+        * MAILGUN_ENDPOINT=api.mailgun.net
+      - Esquema: https
+      - Configuración: config/services.php
+   
+   C) Postmark
+      - Transport: postmark
+      - Variable de entorno: POSTMARK_TOKEN
+      - Configuración: config/services.php
+   
+   D) Amazon SES
+      - Transport: ses
+      - Variables de entorno:
+        * AWS_ACCESS_KEY_ID
+        * AWS_SECRET_ACCESS_KEY
+        * AWS_DEFAULT_REGION=us-east-1
+      - Configuración: config/services.php
+   
+   E) Sendmail
+      - Transport: sendmail
+      - Path: /usr/sbin/sendmail -bs -i
+   
+   F) Log (Desarrollo)
+      - Transport: log
+      - Uso: Guarda emails en archivos de log
+   
+   G) Array (Testing)
+      - Transport: array
+      - Uso: Almacena emails en memoria para testing
+
+2.3 NOTIFICACIONES DE EMAIL
+   - Verificación de email: VerifyEmailNotification
+   - Recordatorios de tareas: TaskDueSoonNotification
+   - Recordatorios de proyectos: ProjectDueSoonNotification
+   - Recordatorios de exámenes: ExamReminderNotification
+   - Notificaciones de calificaciones: GradeNotification
+   - Notificaciones de eventos: NewEventNotification, UpcomingEventNotification
+   - Verificación OTP: OtpVerificationNotification
+
+================================================================================
+3. CONEXIONES CON GOOGLE (OAuth 2.0)
+================================================================================
+
+3.1 AUTENTICACIÓN CON GOOGLE
+   - Servicio: Google OAuth 2.0
+   - Librería: Laravel Socialite
+   - Configuración: config/socialite.php y config/services.php
+   - Variables de entorno:
+     * GOOGLE_CLIENT_ID
+     * GOOGLE_CLIENT_SECRET
+     * GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+
+3.2 ENDPOINTS DE GOOGLE OAUTH
+   - URL de autenticación: GET /api/auth/google/url
+   - Callback: GET /api/auth/google/callback
+   - Estado: GET /api/auth/google/status (requiere autenticación)
+   - Desconectar: POST /api/auth/google/disconnect (requiere autenticación)
+
+3.3 APIS DE GOOGLE REQUERIDAS
+   - Google+ API
+   - Google OAuth2 API
+
+3.4 FLUJO DE AUTENTICACIÓN
+   1. Usuario solicita URL de autenticación
+   2. Redirección a Google para autorización
+   3. Google redirige a callback con código
+   4. Aplicación intercambia código por token
+   5. Se obtiene información del usuario
+   6. Se crea/actualiza usuario en base de datos
+   7. Se genera token de acceso (Sanctum)
+
+================================================================================
+4. SISTEMA DE AUTENTICACIÓN (Laravel Sanctum)
+================================================================================
+
+4.1 TOKENS DE ACCESO
+   - Sistema: Laravel Sanctum
+   - Tipo: Personal Access Tokens
+   - Expiración: null (sin expiración por defecto)
+   - Tabla: personal_access_tokens
+   - Configuración: config/sanctum.php
+
+4.2 DOMINIOS ESTATEFUL (SPA)
+   - Dominios permitidos:
+     * localhost
+     * localhost:3000
+     * 127.0.0.1
+     * 127.0.0.1:8000
+     * ::1
+     * APP_URL (desde variable de entorno)
+   - Variable de entorno: SANCTUM_STATEFUL_DOMAINS
+
+4.3 MIDDLEWARE
+   - Verificación CSRF: VerifyCsrfToken
+   - Encriptación de cookies: EncryptCookies
+   - Guard: web
+
+================================================================================
+5. ENDPOINTS API REST (20 endpoints)
+================================================================================
+
+5.1 AUTENTICACIÓN (5 endpoints)
+   
+   A) POST /api/auth/register
+      - Descripción: Registrar nuevo usuario
+      - Autenticación: No requerida
+      - Parámetros:
+        * name (requerido)
+        * last_name (requerido)
+        * email (requerido, único)
+        * password (requerido, confirmado)
+        * role (opcional, por defecto: student)
+      - Respuesta: Usuario creado + token de acceso
+      - Controlador: AuthController@register
+   
+   B) POST /api/auth/login
+      - Descripción: Iniciar sesión
+      - Autenticación: No requerida
+      - Parámetros:
+        * email (requerido)
+        * password (requerido)
+      - Respuesta: Usuario + token de acceso
+      - Controlador: AuthController@login
+   
+   C) POST /api/auth/logout
+      - Descripción: Cerrar sesión
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Mensaje de confirmación
+      - Controlador: AuthController@logout
+   
+   D) GET /api/auth/me
+      - Descripción: Obtener información del usuario autenticado
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Datos del usuario
+      - Controlador: AuthController@me
+   
+   E) POST /api/auth/profile
+      - Descripción: Actualizar perfil del usuario
+      - Autenticación: Requerida (Sanctum)
+      - Parámetros opcionales:
+        * name
+        * last_name
+        * bio
+        * phone
+        * location
+        * timezone
+        * language
+      - Respuesta: Usuario actualizado
+      - Controlador: AuthController@updateProfile
+
+5.2 VERIFICACIÓN DE EMAIL (4 endpoints)
+   
+   A) POST /api/email/send-verification
+      - Descripción: Enviar email de verificación
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Mensaje de confirmación
+      - Controlador: EmailVerificationController@sendVerificationEmail
+   
+   B) GET /api/email/verification-status
+      - Descripción: Verificar estado de verificación de email
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Estado de verificación
+      - Controlador: EmailVerificationController@checkVerificationStatus
+   
+   C) POST /api/email/resend-verification
+      - Descripción: Reenviar email de verificación
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Mensaje de confirmación
+      - Controlador: EmailVerificationController@resendVerificationEmail
+   
+   D) GET /api/email/verify/{id}/{hash}
+      - Descripción: Verificar email mediante enlace
+      - Autenticación: No requerida
+      - Parámetros de ruta:
+        * id: ID del usuario
+        * hash: Hash de verificación
+      - Respuesta: Redirección o JSON
+      - Controlador: EmailVerificationController@verify
+
+5.3 AUTENTICACIÓN CON GOOGLE (4 endpoints)
+   
+   A) GET /api/auth/google/url
+      - Descripción: Obtener URL de autenticación con Google
+      - Autenticación: No requerida
+      - Respuesta: URL de redirección a Google
+      - Controlador: GoogleAuthController@getGoogleAuthUrl
+   
+   B) GET /api/auth/google/callback
+      - Descripción: Callback de autenticación con Google
+      - Autenticación: No requerida
+      - Respuesta: Usuario + token de acceso
+      - Controlador: GoogleAuthController@handleGoogleCallback
+   
+   C) GET /api/auth/google/status
+      - Descripción: Verificar estado de autenticación con Google
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Estado de autenticación Google
+      - Controlador: GoogleAuthController@checkGoogleAuthStatus
+   
+   D) POST /api/auth/google/disconnect
+      - Descripción: Desconectar cuenta de Google
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Mensaje de confirmación
+      - Controlador: GoogleAuthController@disconnectGoogle
+
+5.4 NOTIFICACIONES (6 endpoints)
+   
+   A) POST /api/notifications/task
+      - Descripción: Enviar notificación de tarea
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@sendTaskNotification
+   
+   B) POST /api/notifications/project
+      - Descripción: Enviar notificación de proyecto
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@sendProjectNotification
+   
+   C) POST /api/notifications/exam
+      - Descripción: Enviar notificación de examen
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@sendExamNotification
+   
+   D) GET /api/notifications/settings
+      - Descripción: Obtener configuración de notificaciones
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@getNotificationSettings
+   
+   E) POST /api/notifications/settings
+      - Descripción: Actualizar configuración de notificaciones
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@updateNotificationSettings
+   
+   F) POST /api/notifications/send-automatic
+      - Descripción: Enviar notificaciones automáticas
+      - Autenticación: Requerida (Sanctum)
+      - Controlador: NotificationController@sendAutomaticNotifications
+
+5.5 USUARIO (1 endpoint)
+   
+   A) GET /api/user
+      - Descripción: Obtener información del usuario autenticado
+      - Autenticación: Requerida (Sanctum)
+      - Respuesta: Datos del usuario
+      - Función: Closure en routes/api.php
+
+================================================================================
+6. RUTAS WEB (Aplicación Web)
+================================================================================
+
+6.1 AUTENTICACIÓN WEB
+   - Registro: GET/POST /register
+   - Login: GET/POST /login
+   - Logout: POST /logout
+   - Recuperar contraseña: GET/POST /forgot-password
+   - Resetear contraseña: GET/POST /reset-password/{token}
+   - Verificar email: GET /verify-email, GET /verify-email/{id}/{hash}
+   - Google OAuth: GET /auth/google, GET /auth/google/callback
+   - OTP: GET/POST /verify-otp, POST /resend-otp
+
+6.2 DASHBOARD Y PERFIL
+   - Dashboard: GET /dashboard
+   - Perfil: GET /profile, POST /profile/update
+   - Cambiar contraseña: POST /profile/password
+   - Preferencias: POST /profile/preferences
+   - Eliminar foto: DELETE /profile/photo
+   - Eliminar cuenta: DELETE /profile
+
+6.3 TAREAS
+   - CRUD completo: /tasks (GET, POST, PUT, DELETE)
+   - Toggle estado: PATCH /tasks/{task}/toggle-status
+   - Archivos: POST /tasks/{task}/upload-file
+   - Ver archivo: GET /tasks/{task}/view-file
+   - Descargar archivo: GET /tasks/{task}/download-file
+   - Eliminar archivo: DELETE /tasks/{task}/delete-file
+   - Calificar: POST /tasks/{task}/grade
+   - Material de apoyo: GET /tasks/{task}/support/view|download
+
+6.4 PROYECTOS
+   - CRUD completo: /projects (GET, POST, PUT, DELETE)
+   - Toggle estado: PATCH /projects/{project}/toggle-status
+   - Actualizar progreso: PATCH /projects/{project}/update-progress
+   - Archivos: POST /projects/{project}/upload-file
+   - Ver archivo: GET /projects/{project}/view-file
+   - Descargar archivo: GET /projects/{project}/download-file
+   - Eliminar archivo: DELETE /projects/{project}/delete-file
+   - Calificar: POST /projects/{project}/grade
+   - Material de apoyo: GET /projects/{project}/support/view|download
+
+6.5 SUBTAREAS DE PROYECTOS
+   - Listar: GET /projects/{project}/tasks
+   - Crear: GET/POST /projects/{project}/tasks/create|store
+   - Ver: GET /projects/{project}/tasks/{projectTask}
+   - Editar: GET/PUT /projects/{project}/tasks/{projectTask}/edit|update
+   - Eliminar: DELETE /projects/{project}/tasks/{projectTask}
+   - Toggle estado: POST /projects/{project}/tasks/{projectTask}/toggle-status
+   - Archivos: POST /projects/{project}/tasks/{projectTask}/upload-file
+   - Eliminar archivo: DELETE /projects/{project}/tasks/{projectTask}/delete-file
+   - Descargar archivo: GET /projects/{project}/tasks/{projectTask}/download-file
+   - Ver archivo: GET /projects/{project}/tasks/{projectTask}/view-file
+   - Calificar: POST /projects/{project}/tasks/{projectTask}/grade
+   - Reordenar: POST /projects/{project}/tasks/reorder
+
+6.6 CURSOS
+   - CRUD completo: /courses (GET, POST, PUT, DELETE)
+
+6.7 RECORDATORIOS
+   - CRUD completo: /reminders (GET, POST, PUT, DELETE)
+   - Toggle estado: PATCH /reminders/{reminder}/toggle-status
+
+6.8 CALENDARIO
+   - Ver calendario: GET /calendar
+   - Eventos: GET /calendar/events
+   - Crear evento: POST /calendar/events
+   - Actualizar evento: PUT /calendar/events/{event}
+   - Eliminar evento: DELETE /calendar/events/{event}
+
+6.9 NOTIFICACIONES
+   - Listar: GET /notifications
+   - Marcar como leída: POST /notifications/{id}/mark-as-read
+   - Marcar todas como leídas: POST /notifications/mark-all-as-read
+   - Eliminar: DELETE /notifications/{id}
+   - No leídas: GET /notifications/unread
+   - Eventos próximos: GET /notifications/upcoming-events
+   - Configuración: GET/PUT /notifications/settings
+
+6.10 CONFIGURACIÓN
+   - General: GET/PUT /settings/general
+   - Notificaciones: GET/PUT /settings/notifications
+   - Seguridad: GET /settings/security
+   - Cambiar contraseña: PUT /settings/password
+   - Perfil: GET/PUT /settings/profile
+   - Preferencias: POST /settings/preferences
+   - Exportar datos: GET /settings/export-data
+   - Eliminar cuenta: DELETE /settings/delete-account
+
+6.11 PROFESORES (Rutas protegidas con role:teacher)
+   - Dashboard: GET /teacher/dashboard
+   - Estudiantes: GET /teacher/students
+   - Tareas: GET /teacher/tasks
+   - Proyectos: GET /teacher/projects
+   - Calificaciones: GET /teacher/grades
+   - Analytics: GET /teacher/analytics
+   - Descargar reporte: GET /teacher/analytics/download
+   - Asignar estudiantes: GET/POST /teacher/assign-students
+   - Eliminar asignación: DELETE /teacher/assign-students/{assignment}
+   - Actualizar nombre de clase: PATCH /teacher/assign-students/{assignment}/class-name
+   - Crear tarea: GET/POST /teacher/create-task
+   - Crear proyecto: GET/POST /teacher/create-project
+   - Cursos de estudiante: GET /teacher/students/{student}/courses
+   - Calificar tarea: POST /teacher/tasks/{task}/grade
+   - Calificar proyecto: POST /teacher/projects/{project}/grade
+   - Ver tareas de estudiantes: GET /teacher/student-tasks
+   - Ver proyectos de estudiantes: GET /teacher/student-projects
+
+6.12 ADMINISTRADORES (Rutas protegidas con role:admin)
+   - Dashboard: GET /admin/dashboard
+   - Usuarios: GET /admin/users
+   - Profesores: GET /admin/teachers
+   - Descargar reporte profesor: GET /admin/teachers/{teacher}/download-report
+   - Asignar rol: POST /admin/users/{user}/assign-role
+   - Aprobar usuario: POST /admin/users/{user}/approve
+   - Rechazar usuario: POST /admin/users/{user}/reject
+   - Crear profesor: GET/POST /admin/teachers/create|store
+   - Reportes: GET /admin/reports
+   - Reporte de usuarios: GET /admin/reports/users
+   - Reporte de rendimiento profesores: GET /admin/reports/teachers-performance
+   - Reporte de uso del sistema: GET /admin/reports/system-usage
+   - Configuración: GET /admin/settings
+   - Actualizar configuración general: POST /admin/settings/general
+   - Actualizar configuración de seguridad: POST /admin/settings/security
+   - Actualizar configuración de notificaciones: POST /admin/settings/notifications
+   - Info de base de datos: GET /admin/settings/database/info
+   - Backup de base de datos: POST /admin/settings/database/backup
+   - Limpiar caché: POST /admin/settings/cache/clear
+   - Logs: GET /admin/logs
+   - Asignaciones: GET /admin/assignments
+   - Crear asignación: POST /admin/assignments
+   - Toggle asignación: PATCH /admin/assignments/{assignment}/toggle
+   - Eliminar asignación: DELETE /admin/assignments/{assignment}
+
+6.13 BÚSQUEDA
+   - Búsqueda global: GET /search
+
+================================================================================
+7. SISTEMA DE ARCHIVOS
+================================================================================
+
+7.1 DISCOS DISPONIBLES
+   
+   A) Local (Privado)
+      - Driver: local
+      - Ruta: storage/app/private
+      - Uso: Archivos privados del usuario
+      - Acceso: Solo mediante aplicación
+   
+   B) Public
+      - Driver: local
+      - Ruta: storage/app/public
+      - URL: {APP_URL}/storage
+      - Visibilidad: pública
+      - Enlace simbólico: public/storage -> storage/app/public
+   
+   C) Amazon S3
+      - Driver: s3
+      - Variables de entorno:
+        * AWS_ACCESS_KEY_ID
+        * AWS_SECRET_ACCESS_KEY
+        * AWS_DEFAULT_REGION
+        * AWS_BUCKET
+        * AWS_URL
+        * AWS_ENDPOINT
+        * AWS_USE_PATH_STYLE_ENDPOINT=false
+      - Uso: Almacenamiento en la nube
+
+7.2 TIPOS DE ARCHIVOS MANEJADOS
+   - Archivos de tareas (subidos por estudiantes)
+   - Archivos de proyectos (subidos por estudiantes)
+   - Material de apoyo (subido por profesores)
+   - Fotos de perfil
+   - Reportes exportados (CSV, PDF)
+
+================================================================================
+8. SISTEMA DE CACHE
+================================================================================
+
+8.1 DRIVERS DISPONIBLES
+   
+   A) Database (Predeterminado)
+      - Driver: database
+      - Tabla: cache (configurable)
+      - Variables de entorno:
+        * CACHE_STORE=database
+        * DB_CACHE_CONNECTION
+        * DB_CACHE_TABLE=cache
+   
+   B) File
+      - Driver: file
+      - Ruta: storage/framework/cache/data
+   
+   C) Redis
+      - Driver: redis
+      - Conexión: cache (desde Redis)
+      - Variables de entorno:
+        * CACHE_STORE=redis
+        * REDIS_CACHE_CONNECTION=cache
+   
+   D) Memcached
+      - Driver: memcached
+      - Host: 127.0.0.1
+      - Puerto: 11211
+      - Variables de entorno:
+        * MEMCACHED_HOST=127.0.0.1
+        * MEMCACHED_PORT=11211
+        * MEMCACHED_PERSISTENT_ID
+        * MEMCACHED_USERNAME
+        * MEMCACHED_PASSWORD
+   
+   E) DynamoDB
+      - Driver: dynamodb
+      - Variables de entorno:
+        * AWS_ACCESS_KEY_ID
+        * AWS_SECRET_ACCESS_KEY
+        * AWS_DEFAULT_REGION
+        * DYNAMODB_CACHE_TABLE=cache
+        * DYNAMODB_ENDPOINT
+   
+   F) Array
+      - Driver: array
+      - Uso: Testing, no persiste
+   
+   G) Octane
+      - Driver: octane
+      - Uso: Cache en memoria con Laravel Octane
+
+8.2 PREFIJO DE CACHE
+   - Formato: {APP_NAME}_cache_
+   - Variable de entorno: CACHE_PREFIX
+   - Ejemplo: taskly_cache_
+
+================================================================================
+9. SISTEMA DE COLAS (QUEUES)
+================================================================================
+
+9.1 CONEXIONES DISPONIBLES
+   
+   A) Database (Predeterminado)
+      - Driver: database
+      - Tabla: jobs
+      - Variables de entorno:
+        * QUEUE_CONNECTION=database
+        * DB_QUEUE_CONNECTION
+        * DB_QUEUE_TABLE=jobs
+        * DB_QUEUE=default
+        * DB_QUEUE_RETRY_AFTER=90
+   
+   B) Sync
+      - Driver: sync
+      - Uso: Ejecución inmediata (desarrollo)
+   
+   C) Redis
+      - Driver: redis
+      - Variables de entorno:
+        * QUEUE_CONNECTION=redis
+        * REDIS_QUEUE_CONNECTION=default
+        * REDIS_QUEUE=default
+        * REDIS_QUEUE_RETRY_AFTER=90
+   
+   D) Beanstalkd
+      - Driver: beanstalkd
+      - Variables de entorno:
+        * BEANSTALKD_QUEUE_HOST=localhost
+        * BEANSTALKD_QUEUE=default
+        * BEANSTALKD_QUEUE_RETRY_AFTER=90
+   
+   E) Amazon SQS
+      - Driver: sqs
+      - Variables de entorno:
+        * AWS_ACCESS_KEY_ID
+        * AWS_SECRET_ACCESS_KEY
+        * SQS_PREFIX
+        * SQS_QUEUE=default
+        * SQS_SUFFIX
+        * AWS_DEFAULT_REGION=us-east-1
+
+9.2 JOBS DISPONIBLES
+   - ProcessTaskCompletion: Procesa completado de tareas
+
+9.3 TRABAJOS FALLIDOS
+   - Driver: database-uuids (predeterminado)
+   - Tabla: failed_jobs
+   - Variables de entorno:
+     * QUEUE_FAILED_DRIVER=database-uuids
+     * DB_CONNECTION
+
+================================================================================
+10. SESIONES
+================================================================================
+
+10.1 DRIVERS DISPONIBLES
+   - File (predeterminado)
+   - Cookie
+   - Database
+   - Memcached
+   - Redis
+   - Array (testing)
+   - DynamoDB
+
+10.2 CONFIGURACIÓN
+   - Driver: file (predeterminado)
+   - Lifetime: 120 minutos
+   - Variables de entorno:
+     * SESSION_DRIVER=file
+     * SESSION_LIFETIME=120
+
+================================================================================
+11. CONFIGURACIÓN DE LA APLICACIÓN
+================================================================================
+
+11.1 VARIABLES PRINCIPALES
+   - APP_NAME="Taskly"
+   - APP_ENV=local|production|testing
+   - APP_KEY=base64:...
+   - APP_DEBUG=true|false
+   - APP_URL=http://localhost:8000
+   - LOG_CHANNEL=stack
+   - LOG_LEVEL=debug|info|warning|error
+
+11.2 BROADCASTING
+   - Driver: log (predeterminado)
+   - Variables de entorno:
+     * BROADCAST_DRIVER=log
+   - Alternativas: pusher, redis, null
+
+11.3 PUSHER (Opcional)
+   - Variables de entorno:
+     * PUSHER_APP_ID
+     * PUSHER_APP_KEY
+     * PUSHER_APP_SECRET
+     * PUSHER_HOST
+     * PUSHER_PORT=443
+     * PUSHER_SCHEME=https
+     * PUSHER_APP_CLUSTER=mt1
+
+================================================================================
+12. MIDDLEWARE Y SEGURIDAD
+================================================================================
+
+12.1 MIDDLEWARE PERSONALIZADO
+   - RoleMiddleware: Verifica roles de usuario (role:teacher, role:admin)
+   - ValidateRequest: Valida peticiones
+   - EnsureEmailIsVerified: Verifica email verificado
+
+12.2 AUTENTICACIÓN
+   - Guard: web (predeterminado)
+   - Provider: users
+   - Model: App\Models\User
+   - Hash: bcrypt
+
+12.3 PROTECCIÓN CSRF
+   - Middleware: VerifyCsrfToken
+   - Excepciones: Configurables en VerifyCsrfToken
+
+================================================================================
+13. MODELOS Y RELACIONES
+================================================================================
+
+13.1 MODELOS PRINCIPALES
+   - User: Usuarios del sistema
+   - Task: Tareas
+   - Project: Proyectos
+   - ProjectTask: Subtareas de proyectos
+   - Course: Cursos
+   - Reminder: Recordatorios
+   - Tag: Etiquetas
+   - TeacherStudentAssignment: Asignaciones profesor-estudiante
+   - OtpCode: Códigos OTP para verificación
+
+13.2 POLÍTICAS DE AUTORIZACIÓN
+   - CoursePolicy
+   - ProjectPolicy
+   - ReminderPolicy
+   - TagPolicy
+   - TaskPolicy
+
+================================================================================
+14. NOTIFICACIONES
+================================================================================
+
+14.1 TIPOS DE NOTIFICACIONES
+   - VerifyEmailNotification: Verificación de email
+   - TaskDueSoonNotification: Tarea próxima a vencer
+   - ProjectDueSoonNotification: Proyecto próximo a vencer
+   - ExamReminderNotification: Recordatorio de examen
+   - GradeNotification: Notificación de calificación
+   - NewEventNotification: Nuevo evento
+   - UpcomingEventNotification: Evento próximo
+   - OtpVerificationNotification: Verificación OTP
+
+14.2 CANALES
+   - Email: Envío por correo electrónico
+   - Database: Almacenamiento en base de datos
+   - Mail: Notificaciones por email
+
+================================================================================
+15. RESUMEN DE CONEXIONES EXTERNAS
+================================================================================
+
+15.1 SERVICIOS REQUERIDOS
+   1. Base de datos (SQLite/MySQL/MariaDB/PostgreSQL/SQL Server)
+   2. Servidor SMTP (Gmail/Mailgun/Postmark/SES)
+   3. Google OAuth 2.0 (Opcional, para autenticación con Google)
+   4. Redis (Opcional, para cache y sesiones)
+   5. Amazon S3 (Opcional, para almacenamiento de archivos)
+
+15.2 ENDPOINTS EXTERNOS UTILIZADOS
+   - Google OAuth: https://accounts.google.com/o/oauth2/auth
+   - Google Token: https://oauth2.googleapis.com/token
+   - Google User Info: https://www.googleapis.com/oauth2/v2/userinfo
+   - Mailgun API: https://api.mailgun.net (si se usa Mailgun)
+   - Amazon SES: https://email.{region}.amazonaws.com (si se usa SES)
+   - Amazon S3: https://s3.{region}.amazonaws.com (si se usa S3)
+
+================================================================================
+16. VARIABLES DE ENTORNO COMPLETAS
+================================================================================
+
+# Aplicación
+APP_NAME="Taskly"
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# Base de datos
+DB_CONNECTION=sqlite|mysql|pgsql|sqlsrv
+DB_HOST=127.0.0.1
+DB_PORT=3306|5432|1433
+DB_DATABASE=taskly
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Email
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=tu-email@gmail.com
+MAIL_PASSWORD=tu-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=tu-email@gmail.com
+MAIL_FROM_NAME="Taskly"
+
+# Google OAuth
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+
+# Cache
+CACHE_STORE=database|file|redis|memcached
+CACHE_PREFIX=taskly_cache_
+
+# Sesiones
+SESSION_DRIVER=file|database|redis|memcached
+SESSION_LIFETIME=120
+
+# Colas
+QUEUE_CONNECTION=database|sync|redis|beanstalkd|sqs
+
+# Redis (si se usa)
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=null
+REDIS_DB=0
+REDIS_CACHE_DB=1
+
+# Amazon AWS (opcional)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_URL=
+AWS_ENDPOINT=
+
+# Mailgun (opcional)
+MAILGUN_DOMAIN=
+MAILGUN_SECRET=
+MAILGUN_ENDPOINT=api.mailgun.net
+
+# Postmark (opcional)
+POSTMARK_TOKEN=
+
+# Sanctum
+SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,127.0.0.1,127.0.0.1:8000
+
+# Broadcasting
+BROADCAST_DRIVER=log|pusher|redis
+
+# Pusher (opcional)
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+================================================================================
+17. ARCHIVOS DE CONFIGURACIÓN
+================================================================================
+
+- config/app.php: Configuración general de la aplicación
+- config/auth.php: Configuración de autenticación
+- config/cache.php: Configuración de cache
+- config/database.php: Configuración de bases de datos
+- config/filesystems.php: Configuración de sistema de archivos
+- config/logging.php: Configuración de logs
+- config/mail.php: Configuración de email
+- config/queue.php: Configuración de colas
+- config/sanctum.php: Configuración de Laravel Sanctum
+- config/services.php: Configuración de servicios externos
+- config/session.php: Configuración de sesiones
+- config/socialite.php: Configuración de Laravel Socialite
+
+================================================================================
+18. ESTRUCTURA DE RUTAS
+================================================================================
+
+18.1 ARCHIVOS DE RUTAS
+   - routes/api.php: Rutas de API REST (20 endpoints)
+   - routes/web.php: Rutas de aplicación web
+   - routes/auth.php: Rutas de autenticación web
+   - routes/console.php: Comandos de consola
+
+18.2 PREFIJOS
+   - API: /api
+   - Profesores: /teacher
+   - Administradores: /admin
+
+18.3 MIDDLEWARE APLICADO
+   - auth: Autenticación requerida
+   - verified: Email verificado
+   - role:teacher: Rol de profesor
+   - role:admin: Rol de administrador
+   - auth:sanctum: Autenticación por token (API)
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
+
+Este documento fue generado automáticamente analizando la estructura del
+proyecto Taskly v14.0.0. Para más información, consultar la documentación
+oficial de Laravel y los archivos de configuración del proyecto.
+
+Fecha de generación: 2025
+Versión del proyecto: Taskly v14.0.0
+

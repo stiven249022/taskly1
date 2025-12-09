@@ -1,0 +1,228 @@
+/* Estilos adicionales para modo oscuro */
+
+/* Scrollbar personalizada para modo oscuro */
+.dark ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Transiciones suaves para cambios de tema */
+* {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Estilos para tooltips en modo oscuro */
+.dark .tooltip {
+    background-color: #1f2937;
+    color: #f9fafb;
+    border: 1px solid #374151;
+}
+
+/* Estilos para modales en modo oscuro */
+.dark .modal {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+}
+
+.dark .modal-header {
+    border-bottom: 1px solid #374151;
+}
+
+.dark .modal-footer {
+    border-top: 1px solid #374151;
+}
+
+/* Estilos para dropdowns en modo oscuro */
+.dark .dropdown-menu {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.dark .dropdown-item {
+    color: #f9fafb;
+}
+
+.dark .dropdown-item:hover {
+    background-color: #374151;
+}
+
+/* Estilos para formularios en modo oscuro */
+.dark .form-control:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+.dark .form-select {
+    background-color: #374151;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark .form-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+/* Estilos para tablas en modo oscuro */
+.dark .table {
+    color: #f9fafb;
+}
+
+.dark .table th {
+    background-color: #374151;
+    border-color: #6b7280;
+}
+
+.dark .table td {
+    border-color: #6b7280;
+}
+
+.dark .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(55, 65, 81, 0.5);
+}
+
+/* Estilos para badges en modo oscuro */
+.dark .badge-primary {
+    background-color: #6366f1;
+    color: #ffffff;
+}
+
+.dark .badge-secondary {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+
+.dark .badge-success {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.dark .badge-danger {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.dark .badge-warning {
+    background-color: #f59e0b;
+    color: #ffffff;
+}
+
+.dark .badge-info {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+/* Estilos para progress bars en modo oscuro */
+.dark .progress {
+    background-color: #374151;
+}
+
+.dark .progress-bar {
+    background-color: #6366f1;
+}
+
+/* Estilos para paginación en modo oscuro */
+.dark .pagination .page-link {
+    background-color: #374151;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark .pagination .page-link:hover {
+    background-color: #6b7280;
+    border-color: #9ca3af;
+}
+
+.dark .pagination .page-item.active .page-link {
+    background-color: #6366f1;
+    border-color: #6366f1;
+}
+
+.dark .pagination .page-item.disabled .page-link {
+    background-color: #374151;
+    border-color: #6b7280;
+    color: #9ca3af;
+}
+
+/* Estilos para tooltips personalizados */
+.tooltip-dark {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-dark .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: #1f2937;
+    color: #f9fafb;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid #374151;
+}
+
+.tooltip-dark:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Estilos para loading spinners en modo oscuro */
+.dark .spinner-border {
+    border-color: #6b7280;
+    border-top-color: #6366f1;
+}
+
+.dark .spinner-grow {
+    background-color: #6366f1;
+}
+
+/* Estilos para animaciones de carga */
+@keyframes pulse-dark {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.dark .animate-pulse {
+    animation: pulse-dark 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Estilos para focus visible en modo oscuro */
+.dark *:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+}
+
+/* Estilos para selección de texto en modo oscuro */
+.dark ::selection {
+    background-color: #6366f1;
+    color: #ffffff;
+}
+
+.dark ::-moz-selection {
+    background-color: #6366f1;
+    color: #ffffff;
+} 

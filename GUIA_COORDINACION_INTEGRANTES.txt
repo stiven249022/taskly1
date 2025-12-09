@@ -1,0 +1,879 @@
+================================================================================
+           GUÍA DE COORDINACIÓN ENTRE INTEGRANTES - TASKLY
+              Cómo Combinar y Trabajar en Equipo
+================================================================================
+
+Este documento explica detalladamente cómo los 4 integrantes deben coordinar
+su trabajo, qué archivos comparten, cómo se conectan las partes y mejores
+prácticas para trabajar en equipo.
+
+================================================================================
+                    DIAGRAMA DE DEPENDENCIAS
+================================================================================
+
+                    ┌─────────────────────┐
+                    │  INTEGRANTE 1       │
+                    │  Autenticación      │
+                    │  y Usuarios         │
+                    └──────────┬──────────┘
+                                │
+                ┌───────────────┼───────────────┐
+                │               │               │
+                ▼               ▼               ▼
+    ┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+    │ INTEGRANTE 2  │  │ INTEGRANTE 3  │  │ INTEGRANTE 4  │
+    │ Tareas y      │  │ Cursos,       │  │ Paneles       │
+    │ Proyectos     │  │ Recordatorios │  │ Admin/Teacher│
+    └───────┬───────┘  └───────┬───────┘  └───────┬───────┘
+            │                  │                  │
+            └──────────────────┼──────────────────┘
+                               │
+                    ┌──────────▼──────────┐
+                    │   BASE COMPARTIDA   │
+                    │  (Laravel Core)     │
+                    └─────────────────────┘
+
+================================================================================
+                    PARTE 1: ARCHIVOS COMPARTIDOS
+                    (Todos deben tener estos archivos)
+================================================================================
+
+1. ESTRUCTURA BASE DEL PROYECTO
+   Todos los integrantes necesitan estos archivos para que la aplicación funcione:
+
+   ✓ composer.json
+      - Define todas las dependencias PHP
+      - TODOS deben usar la misma versión
+      - NO modificar sin consultar al equipo
+   
+   ✓ package.json
+      - Define dependencias de Node.js
+      - TODOS deben usar la misma versión
+      - NO modificar sin consultar al equipo
+   
+   ✓ .env.example
+      - Plantilla de variables de entorno
+      - TODOS deben mantenerlo actualizado
+      - Documentar nuevas variables que agreguen
+
+2. CONFIGURACIÓN LARAVEL
+   Estos archivos son compartidos y NO deben modificarse sin coordinación:
+
+   ✓ config/app.php
+      - Configuración general de Laravel
+      - Solo modificar si TODOS están de acuerdo
+   
+   ✓ config/database.php
+      - Configuración de base de datos
+      - TODOS usan la misma base de datos
+      - Coordinar cambios en conexiones
+   
+   ✓ config/filesystems.php
+      - Configuración de almacenamiento
+      - Compartido entre todos
+   
+   ✓ config/mail.php
+      - Configuración de email
+      - Compartido, especialmente para notificaciones
+   
+   ✓ config/auth.php
+      - Sistema de autenticación
+      - INTEGRANTE 1 es responsable principal
+      - Otros consultar antes de modificar
+
+3. LAYOUTS Y COMPONENTES UI
+   Estos archivos definen la apariencia y deben ser consistentes:
+
+   ✓ resources/views/layouts/app.blade.php
+      - Layout principal de la aplicación
+      - TODOS lo usan
+      - Cambios deben coordinarse
+   
+   ✓ resources/views/layouts/guest.blade.php
+      - Layout para páginas públicas (login, registro)
+      - INTEGRANTE 1 es responsable
+   
+   ✓ resources/views/layouts/navigation.blade.php
+      - Menú de navegación
+      - TODOS lo usan
+      - Coordinar cambios en menú
+   
+   ✓ resources/views/layouts/teacher.blade.php
+      - Layout para panel de profesores
+      - INTEGRANTE 4 es responsable
+   
+   ✓ resources/views/layouts/admin.blade.php
+      - Layout para panel de administradores
+      - INTEGRANTE 4 es responsable
+   
+   ✓ resources/views/components/*.blade.php
+      - Componentes reutilizables (botones, inputs, etc.)
+      - TODOS pueden usar
+      - Coordinar nuevos componentes
+
+4. ASSETS Y ESTILOS
+   Archivos CSS y JavaScript compartidos:
+
+   ✓ resources/css/app.css
+      - Estilos principales
+      - TODOS pueden agregar estilos
+      - Usar convenciones consistentes
+   
+   ✓ resources/js/app.js
+      - JavaScript principal
+      - Coordinar cambios importantes
+   
+   ✓ public/css/dark-mode.css
+      - Estilos para modo oscuro
+      - Compartido
+   
+   ✓ public/js/dark-mode.js
+      - Lógica de modo oscuro
+      - Compartido
+
+5. RUTAS BASE
+   Archivo de rutas compartido, cada uno agrega sus rutas:
+
+   ✓ routes/web.php
+      - TODOS agregan sus rutas aquí
+      - Usar prefijos para organizar
+      - NO eliminar rutas de otros
+      - Comentar claramente cada sección
+   
+   ✓ routes/api.php
+      - INTEGRANTE 1 agrega rutas de autenticación
+      - INTEGRANTE 4 agrega rutas de notificaciones
+      - Coordinar nombres de rutas
+
+6. MIDDLEWARE COMPARTIDO
+   Middleware que todos usan:
+
+   ✓ app/Http/Middleware/ValidateRequest.php
+      - Validación de peticiones
+      - Compartido
+   
+   ✓ app/Http/Middleware/RoleMiddleware.php o CheckRole.php
+      - Verificación de roles
+      - INTEGRANTE 1 y 4 lo usan principalmente
+      - Compartido
+
+7. CONFIGURACIÓN DE BUILD
+   ✓ vite.config.js
+   ✓ tailwind.config.js
+   - NO modificar sin consultar
+
+================================================================================
+        PARTE 2: CÓMO SE CONECTAN LAS PARTES
+        (Flujos de Integración Detallados)
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 1: INTEGRANTE 1 → INTEGRANTE 2                                │
+│ (Autenticación → Tareas y Proyectos)                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Modelo User (app/Models/User.php)
+   - INTEGRANTE 1: Define la estructura
+   - INTEGRANTE 2: Lo usa para relaciones
+   - Ejemplo: Task pertenece a User
+
+2. Sistema de Autenticación
+   - INTEGRANTE 1: Implementa auth
+   - INTEGRANTE 2: Usa Auth::user() y auth()->id()
+   - Ejemplo en TaskController:
+     $task = Task::create([
+         'user_id' => auth()->id(),  // ← Usa autenticación
+         ...
+     ]);
+
+3. Middleware de Autenticación
+   - INTEGRANTE 1: Define middleware 'auth'
+   - INTEGRANTE 2: Lo aplica en controladores:
+     public function __construct() {
+         $this->middleware('auth');
+     }
+
+4. Sistema de Roles
+   - INTEGRANTE 1: Define roles (student, teacher, admin)
+   - INTEGRANTE 2: Verifica roles para funcionalidades de profesores
+   - Ejemplo: Verificar si es profesor para calificar
+
+CÓMO COORDINAR:
+- INTEGRANTE 1 debe documentar:
+  * Estructura del modelo User
+  * Campos disponibles (id, name, email, role, etc.)
+  * Métodos disponibles (hasRole(), etc.)
+  * Cómo obtener usuario actual: auth()->user() o Auth::user()
+
+- INTEGRANTE 2 debe:
+  * Usar siempre auth()->id() para user_id
+  * Verificar roles antes de acciones de profesor
+  * Consultar a INTEGRANTE 1 si necesita nuevos campos en User
+
+EJEMPLO PRÁCTICO:
+// En TaskController (Integrante 2)
+use Illuminate\Support\Facades\Auth;
+
+public function store(Request $request) {
+    // Usa autenticación de Integrante 1
+    $task = Task::create([
+        'user_id' => auth()->id(),  // ← Del sistema de auth
+        'title' => $request->title,
+        ...
+    ]);
+    
+    // Verifica rol si es necesario
+    if (auth()->user()->hasRole('teacher')) {
+        // Lógica de profesor
+    }
+}
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 2: INTEGRANTE 1 → INTEGRANTE 3                                  │
+│ (Autenticación → Cursos y Recordatorios)                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Modelo User
+   - INTEGRANTE 3: Usa User para relaciones
+   - Ejemplo: Course pertenece a User, Reminder pertenece a User
+
+2. Autenticación para Dashboard
+   - INTEGRANTE 1: Proporciona usuario autenticado
+   - INTEGRANTE 3: Muestra datos del usuario en dashboard
+   - Ejemplo en DashboardController:
+     $user = auth()->user();
+     $tasks = Task::where('user_id', $user->id)->get();
+
+3. Sistema de Sesiones
+   - INTEGRANTE 1: Maneja sesiones
+   - INTEGRANTE 3: Usa datos de sesión
+
+CÓMO COORDINAR:
+- INTEGRANTE 3 debe:
+  * Usar auth()->user() para obtener usuario
+  * Filtrar datos por user_id
+  * Consultar estructura de User si necesita campos adicionales
+
+EJEMPLO PRÁCTICO:
+// En DashboardController (Integrante 3)
+public function index() {
+    $user = auth()->user();  // ← Del sistema de auth
+    
+    $tasks = Task::where('user_id', $user->id)->get();
+    $projects = Project::where('user_id', $user->id)->get();
+    $courses = Course::where('user_id', $user->id)->get();
+    
+    return view('dashboard', compact('tasks', 'projects', 'courses'));
+}
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 3: INTEGRANTE 1 → INTEGRANTE 4                                 │
+│ (Autenticación y Roles → Paneles Admin/Teacher)                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Sistema de Roles Completo
+   - INTEGRANTE 1: Define roles y middleware
+   - INTEGRANTE 4: Usa roles para restringir acceso
+   - Ejemplo en routes/web.php:
+     Route::middleware(['auth', 'role:teacher'])->group(...)
+
+2. Middleware de Roles
+   - INTEGRANTE 1: Crea RoleMiddleware
+   - INTEGRANTE 4: Lo aplica en rutas de admin/teacher
+
+3. Modelo User Completo
+   - INTEGRANTE 4: Necesita todos los campos para gestión de usuarios
+
+CÓMO COORDINAR:
+- INTEGRANTE 1 debe documentar:
+  * Cómo funcionan los roles
+  * Cómo aplicar middleware de roles
+  * Estructura completa del modelo User
+
+- INTEGRANTE 4 debe:
+  * Usar middleware de roles en todas las rutas protegidas
+  * Verificar roles antes de acciones administrativas
+  * Consultar si necesita nuevos roles o permisos
+
+EJEMPLO PRÁCTICO:
+// En routes/web.php (Integrante 4)
+Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')
+    ->name('teacher.')->group(function () {
+        Route::get('/dashboard', [TeacherDashboardController::class, 'index']);
+        // Más rutas...
+    });
+
+// En TeacherDashboardController (Integrante 4)
+public function index() {
+    // Verificar que es profesor
+    if (!auth()->user()->hasRole('teacher')) {
+        abort(403);
+    }
+    // Lógica del dashboard
+}
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 4: INTEGRANTE 2 → INTEGRANTE 3                                 │
+│ (Tareas/Proyectos → Calendario y Cursos)                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Modelo Task
+   - INTEGRANTE 2: Define y gestiona
+   - INTEGRANTE 3: Lo usa en calendario y dashboard
+   - Ejemplo: Mostrar tareas en calendario por fecha
+
+2. Modelo Project
+   - INTEGRANTE 2: Define y gestiona
+   - INTEGRANTE 3: Lo usa en calendario
+   - Ejemplo: Mostrar proyectos en calendario
+
+3. Modelo Course
+   - INTEGRANTE 3: Define y gestiona
+   - INTEGRANTE 2: Lo usa para asociar tareas a cursos
+   - Ejemplo: Task pertenece a Course
+
+CÓMO COORDINAR:
+- INTEGRANTE 2 debe documentar:
+  * Estructura de Task (campos, relaciones)
+  * Estructura de Project
+  * Cómo se relacionan con Course
+  * Campos de fecha (due_date, start_date, etc.)
+
+- INTEGRANTE 3 debe:
+  * Consultar estructura de Task/Project antes de usarlos
+  * Usar las relaciones definidas
+  * Coordinar cambios en campos de fecha
+
+EJEMPLO PRÁCTICO:
+// En CalendarController (Integrante 3)
+public function events() {
+    $user = auth()->user();
+    
+    // Usa modelos de Integrante 2
+    $tasks = Task::where('user_id', $user->id)
+        ->whereNotNull('due_date')
+        ->get()
+        ->map(function($task) {
+            return [
+                'title' => $task->title,
+                'start' => $task->due_date->format('Y-m-d'),
+                'type' => 'task'
+            ];
+        });
+    
+    $projects = Project::where('user_id', $user->id)
+        ->whereNotNull('end_date')
+        ->get()
+        ->map(function($project) {
+            return [
+                'title' => $project->title,
+                'start' => $project->end_date->format('Y-m-d'),
+                'type' => 'project'
+            ];
+        });
+    
+    return response()->json(array_merge($tasks->toArray(), $projects->toArray()));
+}
+
+// En TaskController (Integrante 2)
+public function create() {
+    // Usa modelo de Integrante 3
+    $courses = Course::where('user_id', auth()->id())->get();
+    return view('tasks.create', compact('courses'));
+}
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 5: INTEGRANTE 2 → INTEGRANTE 4                                 │
+│ (Tareas/Proyectos → Panel de Profesores)                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Modelos Task y Project
+   - INTEGRANTE 2: Define y gestiona CRUD
+   - INTEGRANTE 4: Los usa para mostrar en panel de profesores
+   - Ejemplo: Ver tareas de estudiantes asignados
+
+2. Sistema de Calificaciones
+   - INTEGRANTE 2: Define campos (grade, feedback, graded_by)
+   - INTEGRANTE 4: Implementa interfaz de calificación
+   - Ejemplo: Profesor califica tarea desde su panel
+
+3. Relación Teacher-Student
+   - INTEGRANTE 4: Gestiona asignaciones
+   - INTEGRANTE 2: Usa teacher_id en Task
+
+CÓMO COORDINAR:
+- INTEGRANTE 2 debe documentar:
+  * Campos de calificación en Task/Project
+  * Cómo se almacenan las calificaciones
+  * Relación con teacher_id
+
+- INTEGRANTE 4 debe:
+  * Consultar estructura antes de implementar calificaciones
+  * Usar los mismos campos definidos
+  * Coordinar cambios en sistema de calificaciones
+
+EJEMPLO PRÁCTICO:
+// En TeacherDashboardController (Integrante 4)
+public function gradeTask(Request $request, Task $task) {
+    // Usa modelo de Integrante 2
+    $task->update([
+        'grade' => $request->grade,
+        'feedback' => $request->feedback,
+        'graded_by' => auth()->id(),
+        'graded_at' => now()
+    ]);
+    
+    return redirect()->back()->with('success', 'Tarea calificada');
+}
+
+// En TaskController (Integrante 2) - ya tiene los campos definidos
+// En Task.php:
+protected $fillable = [
+    'grade',
+    'feedback',
+    'graded_by',
+    'graded_at',
+    ...
+];
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ CONEXIÓN 6: INTEGRANTE 3 → INTEGRANTE 4                                 │
+│ (Calendario/Recordatorios → Notificaciones y Dashboard)                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+QUÉ COMPARTEN:
+1. Modelo Reminder
+   - INTEGRANTE 3: Define y gestiona
+   - INTEGRANTE 4: Lo usa para notificaciones
+   - Ejemplo: Enviar notificación de recordatorio
+
+2. Eventos del Calendario
+   - INTEGRANTE 3: Gestiona eventos
+   - INTEGRANTE 4: Muestra en dashboard
+   - Ejemplo: Widget de eventos próximos
+
+3. Sistema de Notificaciones
+   - INTEGRANTE 4: Gestiona envío
+   - INTEGRANTE 3: Proporciona datos (recordatorios, eventos)
+
+CÓMO COORDINAR:
+- INTEGRANTE 3 debe documentar:
+  * Estructura de Reminder
+  * Campos de fecha para notificaciones
+  * Cómo obtener eventos próximos
+
+- INTEGRANTE 4 debe:
+  * Consultar estructura de Reminder
+  * Usar los mismos campos de fecha
+  * Coordinar formato de notificaciones
+
+EJEMPLO PRÁCTICO:
+// En NotificationController (Integrante 4)
+public function sendAutomaticNotifications() {
+    $user = auth()->user();
+    
+    // Usa modelo de Integrante 3
+    $upcomingReminders = Reminder::where('user_id', $user->id)
+        ->whereDate('due_date', '<=', now()->addDays(2))
+        ->whereDate('due_date', '>=', now())
+        ->get();
+    
+    foreach ($upcomingReminders as $reminder) {
+        $user->notify(new ExamReminderNotification($reminder));
+    }
+}
+
+================================================================================
+        PARTE 3: BASE DE DATOS COMPARTIDA
+        (Coordinación de Migraciones)
+================================================================================
+
+TODOS LOS INTEGRANTES COMPARTEN LA MISMA BASE DE DATOS
+
+ESTRUCTURA DE TABLAS POR INTEGRANTE:
+
+INTEGRANTE 1 (Autenticación):
+- users (id, name, email, password, role, google_id, etc.)
+- personal_access_tokens (para Sanctum)
+- otp_codes (para verificación OTP)
+- password_reset_tokens (si se usa)
+
+INTEGRANTE 2 (Tareas y Proyectos):
+- tasks (id, user_id, teacher_id, course_id, title, due_date, grade, etc.)
+- projects (id, user_id, title, description, status, progress, etc.)
+- project_tasks (id, project_id, title, status, order, etc.)
+
+INTEGRANTE 3 (Cursos y Recordatorios):
+- courses (id, user_id, name, code, description, etc.)
+- reminders (id, user_id, title, description, due_date, etc.)
+- tags (id, name, color, etc.)
+- task_tag (tabla pivot: task_id, tag_id)
+
+INTEGRANTE 4 (Asignaciones y Sistema):
+- teacher_student_assignments (id, teacher_id, student_id, class_name, etc.)
+- notifications (id, user_id, type, data, read_at, etc.)
+- jobs (tabla de colas, compartida)
+- failed_jobs (trabajos fallidos, compartida)
+
+CÓMO COORDINAR MIGRACIONES:
+
+1. ANTES DE CREAR UNA MIGRACIÓN:
+   □ Verificar que no existe una tabla similar
+   □ Consultar con el equipo si afecta otras partes
+   □ Revisar relaciones con otras tablas
+
+2. AL CREAR UNA MIGRACIÓN:
+   □ Usar nombres descriptivos y consistentes
+   □ Incluir timestamps (created_at, updated_at)
+   □ Definir foreign keys correctamente
+   □ Documentar campos importantes
+
+3. RELACIONES ENTRE TABLAS:
+   - tasks.user_id → users.id (Integrante 1 y 2)
+   - tasks.course_id → courses.id (Integrante 2 y 3)
+   - tasks.teacher_id → users.id (Integrante 1 y 2)
+   - projects.user_id → users.id (Integrante 1 y 2)
+   - reminders.user_id → users.id (Integrante 1 y 3)
+   - courses.user_id → users.id (Integrante 1 y 3)
+   - teacher_student_assignments.teacher_id → users.id (Integrante 1 y 4)
+   - teacher_student_assignments.student_id → users.id (Integrante 1 y 4)
+
+EJEMPLO DE COORDINACIÓN:
+
+// Integrante 2 crea migración de tasks
+Schema::create('tasks', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained('users');  // ← Tabla de Integrante 1
+    $table->foreignId('course_id')->nullable()->constrained('courses');  // ← Tabla de Integrante 3
+    $table->foreignId('teacher_id')->nullable()->constrained('users');  // ← Tabla de Integrante 1
+    $table->string('title');
+    $table->date('due_date');
+    // ...
+    $table->timestamps();
+});
+
+// Debe coordinar con:
+// - Integrante 1: Verificar que users.id existe
+// - Integrante 3: Verificar que courses.id existe (o hacer nullable)
+
+================================================================================
+        PARTE 4: CONVENCIONES DE CÓDIGO
+        (Estándares que todos deben seguir)
+================================================================================
+
+1. NOMBRES DE RUTAS:
+   Formato: {recurso}.{accion}
+   Ejemplos:
+   - tasks.index, tasks.create, tasks.store
+   - projects.show, projects.update
+   - teacher.dashboard, admin.users
+
+2. NOMBRES DE VARIABLES:
+   - camelCase para variables: $userName, $taskTitle
+   - snake_case para campos de BD: user_id, due_date
+   - PascalCase para clases: TaskController, User
+
+3. ESTRUCTURA DE CONTROLADORES:
+   - Métodos estándar: index, create, store, show, edit, update, destroy
+   - Siempre usar middleware('auth') en __construct si es necesario
+   - Usar authorize() para verificar permisos
+
+4. ESTRUCTURA DE VISTAS:
+   - Usar layouts compartidos
+   - Componentes reutilizables en resources/views/components/
+   - Nombres de archivos en kebab-case: create-task.blade.php
+
+5. MENSAJES FLASH:
+   - 'success' para operaciones exitosas
+   - 'error' para errores
+   - 'warning' para advertencias
+   - 'info' para información
+
+6. VALIDACIÓN:
+   - Crear Form Requests cuando sea necesario
+   - Usar Validator::make() en controladores API
+   - Mensajes de validación en español
+
+================================================================================
+        PARTE 5: FLUJO DE TRABAJO RECOMENDADO
+        (Cómo trabajar sin conflictos)
+================================================================================
+
+FASE 1: PLANIFICACIÓN (Todos juntos)
+□ Reunión inicial para entender el proyecto completo
+□ Dividir responsabilidades claramente
+□ Definir estructura de base de datos
+□ Acordar convenciones de código
+□ Establecer comunicación (WhatsApp, Discord, etc.)
+
+FASE 2: CONFIGURACIÓN INICIAL (Todos)
+□ Clonar repositorio base
+□ Configurar .env con misma base de datos
+□ Ejecutar migraciones base
+□ Instalar dependencias (composer install, npm install)
+□ Verificar que servidor funciona
+
+FASE 3: DESARROLLO PARALELO
+
+INTEGRANTE 1 (Primero, base para todos):
+□ Implementar autenticación básica
+□ Crear migración de users
+□ Implementar login/registro
+□ Documentar estructura de User
+□ Compartir con equipo
+
+INTEGRANTE 2, 3, 4 (En paralelo después de Integrante 1):
+□ Cada uno trabaja en su parte
+□ Usa autenticación de Integrante 1
+□ Consulta cuando necesite algo de otros
+□ Documenta su parte
+
+FASE 4: INTEGRACIÓN
+□ Reunión para integrar partes
+□ Resolver conflictos en archivos compartidos
+□ Probar flujos completos
+□ Ajustar según sea necesario
+
+FASE 5: DOCUMENTACIÓN
+□ Cada uno documenta su parte
+□ Incluir ejemplos de integración
+□ Documentar dependencias con otras partes
+
+================================================================================
+        PARTE 6: RESOLUCIÓN DE CONFLICTOS
+        (Qué hacer cuando hay problemas)
+================================================================================
+
+CONFLICTO 1: Mismo archivo modificado por varios
+Solución:
+- Usar Git branches para cada funcionalidad
+- Coordinar cambios en archivos compartidos
+- Revisar cambios antes de merge
+- Comunicar cambios importantes
+
+CONFLICTO 2: Diferentes versiones de dependencias
+Solución:
+- Usar composer.lock y package-lock.json
+- NO modificar composer.json/package.json sin consultar
+- Todos usar mismas versiones
+
+CONFLICTO 3: Cambios en estructura de base de datos
+Solución:
+- Coordinar cambios en migraciones
+- Verificar que no rompe relaciones
+- Probar en desarrollo antes de aplicar
+
+CONFLICTO 4: Estilos inconsistentes
+Solución:
+- Usar componentes compartidos
+- Seguir guía de estilos de Tailwind
+- Coordinar cambios en layouts
+
+CONFLICTO 5: Rutas duplicadas o conflictivas
+Solución:
+- Usar prefijos claros (teacher/, admin/)
+- Documentar todas las rutas
+- Verificar que no hay duplicados
+
+================================================================================
+        PARTE 7: CHECKLIST DE COORDINACIÓN
+        (Antes de hacer cambios importantes)
+================================================================================
+
+ANTES DE MODIFICAR ARCHIVOS COMPARTIDOS:
+□ ¿Este archivo lo usa otro integrante?
+□ ¿He consultado con el equipo?
+□ ¿Mi cambio rompe algo existente?
+□ ¿He probado en mi entorno local?
+□ ¿He documentado el cambio?
+
+ANTES DE AGREGAR NUEVAS DEPENDENCIAS:
+□ ¿Es realmente necesaria?
+□ ¿Otro integrante la necesita?
+□ ¿He consultado con el equipo?
+□ ¿He actualizado composer.json/package.json?
+□ ¿He documentado por qué la necesito?
+
+ANTES DE CREAR NUEVAS MIGRACIONES:
+□ ¿Esta tabla ya existe?
+□ ¿Afecta relaciones con otras tablas?
+□ ¿He coordinado con integrantes afectados?
+□ ¿He probado la migración?
+□ ¿He documentado la estructura?
+
+ANTES DE AGREGAR NUEVAS RUTAS:
+□ ¿El nombre de ruta es único?
+□ ¿Sigo las convenciones acordadas?
+□ ¿He agregado middleware correcto?
+□ ¿He documentado la ruta?
+
+ANTES DE SUBIR AL REPOSITORIO:
+□ ¿Mi código funciona localmente?
+□ ¿He probado las funcionalidades?
+□ ¿He documentado cambios importantes?
+□ ¿He actualizado README si es necesario?
+□ ¿He comunicado cambios al equipo?
+
+================================================================================
+        PARTE 8: COMUNICACIÓN ENTRE INTEGRANTES
+        (Qué y cuándo comunicar)
+================================================================================
+
+COMUNICAR INMEDIATAMENTE:
+- Cambios en estructura de base de datos
+- Nuevas dependencias agregadas
+- Cambios en archivos compartidos (layouts, config)
+- Problemas que afectan a otros
+- Nuevas rutas o endpoints importantes
+
+COMUNICAR PERIÓDICAMENTE:
+- Progreso en desarrollo
+- Funcionalidades completadas
+- Problemas encontrados
+- Dudas sobre integración
+
+COMUNICAR AL FINALIZAR:
+- Parte completada y probada
+- Documentación actualizada
+- Cambios importantes realizados
+- Instrucciones para otros integrantes
+
+CANALES DE COMUNICACIÓN SUGERIDOS:
+- Grupo de WhatsApp/Discord para comunicación rápida
+- Documento compartido (Google Docs) para decisiones importantes
+- Issues en GitHub/GitLab para bugs y features
+- Reuniones semanales para sincronización
+
+================================================================================
+        PARTE 9: EJEMPLO PRÁCTICO COMPLETO
+        (Flujo de creación de tarea con calificación)
+================================================================================
+
+ESCENARIO: Profesor crea tarea, estudiante la completa, profesor la califica
+
+PASO 1: INTEGRANTE 1 (Autenticación)
+- Usuario (profesor) inicia sesión
+- Sistema autentica y crea sesión
+- auth()->user() devuelve el profesor
+
+PASO 2: INTEGRANTE 4 (Panel de Profesores)
+- Profesor accede a /teacher/create-task
+- TeacherDashboardController@createTask muestra formulario
+- Usa autenticación de Integrante 1 para verificar rol
+
+PASO 3: INTEGRANTE 2 (Creación de Tarea)
+- Profesor envía formulario
+- TaskController@store crea la tarea
+- Asocia teacher_id con auth()->id() (de Integrante 1)
+- Asocia course_id con curso seleccionado (de Integrante 3)
+
+PASO 4: INTEGRANTE 2 (Estudiante completa tarea)
+- Estudiante inicia sesión (Integrante 1)
+- Ve tarea asignada por profesor
+- Sube archivo de tarea
+- TaskFileController maneja subida
+
+PASO 5: INTEGRANTE 4 (Profesor califica)
+- Profesor ve tarea completada en su panel
+- TeacherDashboardController@gradeTask califica
+- Actualiza campos grade, feedback, graded_by en Task (Integrante 2)
+
+PASO 6: INTEGRANTE 3 (Notificación)
+- Sistema detecta calificación
+- NotificationController envía notificación (Integrante 4)
+- Estudiante ve notificación en dashboard (Integrante 3)
+
+COORDINACIÓN NECESARIA:
+- Integrante 1: Proporciona auth y roles
+- Integrante 2: Define estructura de Task y campos de calificación
+- Integrante 3: Proporciona cursos y dashboard
+- Integrante 4: Implementa interfaz de calificación
+
+================================================================================
+        PARTE 10: MEJORES PRÁCTICAS
+        (Recomendaciones para éxito del equipo)
+================================================================================
+
+1. DOCUMENTACIÓN CONSTANTE
+   - Documentar mientras desarrollas
+   - No dejar documentación para el final
+   - Incluir ejemplos de código
+   - Explicar decisiones importantes
+
+2. PRUEBAS LOCALES
+   - Probar tu parte antes de integrar
+   - Verificar que no rompe funcionalidades existentes
+   - Probar casos edge (límites)
+
+3. CÓDIGO LIMPIO
+   - Seguir convenciones acordadas
+   - Comentar código complejo
+   - Usar nombres descriptivos
+   - Eliminar código comentado innecesario
+
+4. COMUNICACIÓN PROACTIVA
+   - Preguntar antes de asumir
+   - Compartir progreso regularmente
+   - Pedir ayuda cuando sea necesario
+   - Ofrecer ayuda a otros
+
+5. VERSIONAMIENTO ADECUADO
+   - Commits descriptivos
+   - Branches para features importantes
+   - No hacer commit de archivos sensibles (.env)
+   - Usar .gitignore correctamente
+
+6. RESPETO POR EL TRABAJO DE OTROS
+   - No modificar código de otros sin consultar
+   - Respetar estructura establecida
+   - Proponer mejoras constructivamente
+   - Reconocer contribuciones de otros
+
+================================================================================
+                    RESUMEN DE DEPENDENCIAS
+================================================================================
+
+INTEGRANTE 1 ES BASE PARA TODOS:
+- Autenticación (todos la usan)
+- Modelo User (todos lo relacionan)
+- Sistema de roles (Integrante 4 lo usa mucho)
+
+INTEGRANTE 2 DEPENDE DE:
+- Integrante 1: Autenticación y User
+- Integrante 3: Modelo Course
+- Integrante 4: Sistema de calificaciones (coordinación)
+
+INTEGRANTE 3 DEPENDE DE:
+- Integrante 1: Autenticación y User
+- Integrante 2: Modelos Task y Project (para calendario)
+
+INTEGRANTE 4 DEPENDE DE:
+- Integrante 1: Autenticación, User, Roles
+- Integrante 2: Modelos Task y Project (para paneles)
+- Integrante 3: Reminder y eventos (para notificaciones)
+
+TODOS DEPENDEN DE:
+- Estructura base de Laravel
+- Archivos de configuración compartidos
+- Layouts y componentes UI
+- Base de datos compartida
+
+================================================================================
+                    FIN DEL DOCUMENTO
+================================================================================
+
+Este documento proporciona una guía completa para coordinar el trabajo entre
+los 4 integrantes del proyecto Taskly. Sigan estas pautas para un desarrollo
+exitoso y sin conflictos.
+
+Fecha de creación: 2025
+Versión del proyecto: Taskly v14.0.0
+
+RECUERDEN: La comunicación es clave. Cuando tengan dudas, pregunten.
+Cuando hagan cambios importantes, comuníquenlo. Trabajen como equipo.
+
