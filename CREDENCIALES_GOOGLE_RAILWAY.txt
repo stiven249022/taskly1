@@ -38,3 +38,4 @@ GOOGLE_REDIRECT_URI=https://web-production-3192.up.railway.app/auth/google/callb
 
 4. Railway redesplegará automáticamente después de agregar las variables
 
+

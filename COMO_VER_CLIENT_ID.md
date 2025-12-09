@@ -103,3 +103,4 @@ Una vez que tengas el Client ID y Client Secret:
 2. Verifica que hayas creado credenciales OAuth 2.0 (no API keys)
 3. Si no tienes credenciales, créalas siguiendo la guía: `GUIA_CREAR_GOOGLE_OAUTH.md`
 
+

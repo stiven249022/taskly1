@@ -164,3 +164,4 @@ GOOGLE_CLIENT_SECRET=tu-client-secret-aqui
 
 **Última actualización**: Enero 2025
 
+

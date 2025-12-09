@@ -107,9 +107,19 @@ Taskly es una aplicación web moderna para la gestión de tareas, proyectos, cur
 
 Después de ejecutar los seeders, puedes usar estos usuarios de prueba:
 
+### Administrador
+- **Email**: admin@taskly.com | **Contraseña**: admin123
+
+### Profesor
+- **Email**: profesor@taskly.com | **Contraseña**: profesor123
+
+### Estudiantes
+- **Email**: estudiante@taskly.com | **Contraseña**: estudiante123
 - **Email**: usuario@taskly.com | **Contraseña**: usuario123
 - **Email**: maria@taskly.com | **Contraseña**: maria123
 - **Email**: juan@taskly.com | **Contraseña**: juan123
+
+> **Nota**: Los seeders se ejecutan automáticamente en Railway al desplegar. Ver [USUARIOS_PRUEBA_RAILWAY.md](USUARIOS_PRUEBA_RAILWAY.md) para más detalles.
 
 ## Estructura del Proyecto
 
